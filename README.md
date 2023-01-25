@@ -14,3 +14,4 @@ Library
   <div>- BookId</div>
   <div>- BorrowerId</div>
   <div>- DateBorrowed</div>
+  <div>- DateReturned</div>
