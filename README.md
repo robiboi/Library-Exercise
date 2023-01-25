@@ -1,15 +1,15 @@
 Database
 
 Library
- Book
+ * Book
   - Id
   - Name
   - Author
- Borrower
+ * Borrower
   - Id
   - Name
   - Address
- BorrowedBook
+ * BorrowedBook
   - Id
   - BookId
   - BorrowerId
