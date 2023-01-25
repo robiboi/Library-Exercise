@@ -1,15 +1,15 @@
 Database
 
 Library
- * Book
+ <div>Book</div>
   - Id
   - Name
   - Author
- * Borrower
+ <div>Borrower</div>
   - Id
   - Name
   - Address
- * BorrowedBook
+ <div>BorrowedBook</div>
   - Id
   - BookId
   - BorrowerId
