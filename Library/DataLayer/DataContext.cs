@@ -25,6 +25,8 @@ namespace DataLayer
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new BookMap());
+            modelBuilder.ApplyConfiguration(new BorrowerMapping());
+            modelBuilder.ApplyConfiguration(new BorrowedBookMap());
         }
 
         #region Methods
