@@ -6,7 +6,7 @@ namespace DataLayer.Domain
 {
     public class Borrower : BaseEntity
     {
-        public String Name { get; set; }
+        public String BorrowerName { get; set; }
         public String Address { get; set; }
     }
 }

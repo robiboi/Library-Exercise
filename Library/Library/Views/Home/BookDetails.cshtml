@@ -1,5 +1,4 @@
 ﻿@model Library.Models.BookModel
-
 @{
     ViewData["Title"] = "BookDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -32,6 +31,6 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <partial name="Borrower" model="Model.Borrower" />
     <a asp-action="Book">Back to List</a>
 </div>

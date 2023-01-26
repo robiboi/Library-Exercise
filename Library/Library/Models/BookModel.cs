@@ -10,6 +10,6 @@ namespace Library.Models
         public int Id { get; set; }
         public String BookName { get; set; }
         public String Author { get; set; }
-
+        public BorrowerModel Borrower { get; set; }
     }
 }
