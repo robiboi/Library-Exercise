@@ -24,5 +24,10 @@ namespace Services.Services
         {
             return _bookRepository.Table.ToList();
         }
+
+        public Book GetBookById(int id)
+        {
+            return _bookRepository.GetById(id);
+        }
     }
 }

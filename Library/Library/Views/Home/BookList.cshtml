@@ -1,13 +1,13 @@
-﻿@model IEnumerable<WebApplication2.Models.BookModel>
+﻿@model IEnumerable<Library.Models.BookModel>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.BookName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
             </th>
             <th></th>
         </tr>
@@ -19,8 +19,10 @@
                 @Html.DisplayFor(modelItem => item.BookName)
             </td>
             <td>
-                @Html.ActionLink("Book Details", "BookDetails", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "BookDetails", new { id=item.Id }) 
             </td>
         </tr>
 }

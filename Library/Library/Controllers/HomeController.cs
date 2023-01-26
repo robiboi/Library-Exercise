@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using DataLayer.Domain;
 using DataLayer.Interface;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication2.Models;
+using Library.Models;
 
-namespace WebApplication2.Controllers
+namespace Library.Controllers
 {
     public class HomeController : Controller
     {
@@ -28,14 +28,16 @@ namespace WebApplication2.Controllers
         {
             BookModel bookModel = new BookModel();
             return View(bookModel);
-            
         }
 
         [HttpPost]
         public IActionResult Book(BookModel model)
         {
-            Book book = new Book();
-            book.BookName = model.BookName;
+            Book book = new Book
+            {
+                BookName = model.BookName,
+                Author = model.Author
+            };
             _bookServices.InsertBook(book);
             return View(model);
         }
@@ -46,18 +48,27 @@ namespace WebApplication2.Controllers
             List<BookModel> bookModels = new List<BookModel>();
             foreach(var book in books)
             {
-                BookModel bookModel = new BookModel();
-                bookModel.BookName = book.BookName;
+                BookModel bookModel = new BookModel
+                {
+                    Id = book.Id,
+                    BookName = book.BookName,
+                    Author = book.Author
+                };
                 bookModels.Add(bookModel);
             }
             return View(bookModels);
         }
 
-        public IActionResult BookDetails()
+        public IActionResult BookDetails(int id)
         {
- 
-
-            return View();
+            var book = _bookServices.GetBookById(id);
+            BookModel bookModel = new BookModel
+            {
+                Id = book.Id,
+                BookName = book.BookName,
+                Author = book.Author
+            };
+            return View(bookModel);
         }
 
         public IActionResult About()

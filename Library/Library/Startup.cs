@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WebApplication2.Infrastruture;
+using Library.Infrastruture;
 
-namespace WebApplication2
+namespace Library
 {
     public class Startup
     {
