@@ -25,6 +25,7 @@ namespace Library.Infrastruture
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
 
             builder.RegisterType<BookServices>().As<IBookServices>().InstancePerLifetimeScope();
+            builder.RegisterType<BorrowerServices>().As<IBorrowerServices>().InstancePerLifetimeScope();
         }
     }
 }

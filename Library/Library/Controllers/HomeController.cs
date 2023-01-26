@@ -13,10 +13,12 @@ namespace Library.Controllers
     public class HomeController : Controller
     {
         private readonly IBookServices _bookServices;
+        private readonly IBorrowerServices _borrowerServices;
 
-        public HomeController(IBookServices bookService)
+        public HomeController(IBookServices bookService, IBorrowerServices borrowerServices)
         {
             _bookServices = bookService;
+            _borrowerServices = borrowerServices;
         }
 
         public IActionResult Index()
@@ -69,6 +71,24 @@ namespace Library.Controllers
                 Author = book.Author
             };
             return View(bookModel);
+        }
+        
+        public IActionResult Borrower()
+        {
+            BorrowerModel borrower = new BorrowerModel();
+            return View(borrower);
+        }
+
+        [HttpPost]
+       public IActionResult Borrower(BorrowerModel model)
+        {
+            Borrower borrower = new Borrower
+            {
+                BorrowerName = model.BorrowerName,
+                Address = model.Address
+            };
+            _borrowerServices.NewBorrower(borrower);
+            return View(model);
         }
 
         public IActionResult About()

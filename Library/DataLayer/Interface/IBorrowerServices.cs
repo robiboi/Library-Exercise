@@ -8,7 +8,6 @@ namespace DataLayer.Interface
     public interface IBorrowerServices
     {
         void NewBorrower(Borrower borrower);
-        void GetBorrower(Borrower borrower);
-
+        Borrower GetBorrowerById(int id);
     }
 }
