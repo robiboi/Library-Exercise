@@ -8,5 +8,7 @@ namespace WebApplication2.Models
     public class BookModel
     {
         public String BookName { get; set; }
+        public String Author { get; set; }
+
     }
 }

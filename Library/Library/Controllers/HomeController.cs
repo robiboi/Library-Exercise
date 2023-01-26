@@ -53,6 +53,13 @@ namespace WebApplication2.Controllers
             return View(bookModels);
         }
 
+        public IActionResult BookDetails()
+        {
+ 
+
+            return View();
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
