@@ -47,7 +47,18 @@ namespace Services
 
         public T GetById(object id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (id == null)
+                    throw new ArgumentNullException(nameof(id));
+
+                return Entities.Find(id);
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
 
         public void Insert(T entity)
