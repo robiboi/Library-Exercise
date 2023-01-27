@@ -7,6 +7,7 @@ namespace Library.Models
 {
     public class BorrowerModel
     {
+        public int Id { get; set; }
         public String BorrowerName { get; set; }
         public String Address { get; set; }
     }

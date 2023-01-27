@@ -79,6 +79,25 @@ namespace Services
             }
         }
 
+        public T Insert(T entity, bool returnEntity = true)
+        {
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
+
+                Entities.Add(entity);
+
+                _context.SaveChanges();
+                return entity;
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
+        }
+
         public void Insert(IEnumerable<T> entities)
         {
             try
