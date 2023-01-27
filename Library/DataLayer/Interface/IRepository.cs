@@ -24,6 +24,14 @@ namespace DataLayer.Interface
         /// Insert entities
         /// </summary>
         /// <param name="entities">Entities</param>
+        
+        T Insert(T entity, bool b);
+
+        /// <summary>
+        /// Insert entities
+        /// </summary>
+        /// <param name="entities">Entities</param>
+        
         void Insert(IEnumerable<T> entities);
 
         /// <summary>

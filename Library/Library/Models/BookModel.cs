@@ -8,8 +8,8 @@ namespace Library.Models
     public class BookModel
     {
         public int Id { get; set; }
-        public String BookName { get; set; }
-        public String Author { get; set; }
-        public BorrowerModel Borrower { get; set; }
+        public string BookName { get; set; }
+        public string Author { get; set; }
+
     }
 }

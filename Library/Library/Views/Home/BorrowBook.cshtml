@@ -1,0 +1,25 @@
+﻿@model Library.Models.BorrowedBookModel
+
+@{
+    ViewData["Title"] = "BorrowBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>BorrowBook</h2>
+
+<div>
+    <hr />
+    <form asp-action="BorrowBook">
+
+    <partial name="BookDetails" model="Model.Book" />
+    <partial name="_BorrowBook" model="Model.Borrower" />
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-default" />
+    </div>
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

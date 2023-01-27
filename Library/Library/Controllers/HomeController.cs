@@ -14,11 +14,13 @@ namespace Library.Controllers
     {
         private readonly IBookServices _bookServices;
         private readonly IBorrowerServices _borrowerServices;
+        private readonly IBorrowedBookServices _borrowedBookServices;
 
-        public HomeController(IBookServices bookService, IBorrowerServices borrowerServices)
+        public HomeController(IBookServices bookService, IBorrowerServices borrowerServices, IBorrowedBookServices borrowedBookServices)
         {
             _bookServices = bookService;
             _borrowerServices = borrowerServices;
+            _borrowedBookServices = borrowedBookServices;
         }
 
         public IActionResult Index()
@@ -58,10 +60,15 @@ namespace Library.Controllers
                 };
                 bookModels.Add(bookModel);
             }
-            return View(bookModels);
+            return PartialView(bookModels);
         }
 
-        public IActionResult BookDetails(int id)
+        public IActionResult BookDetails(BookModel book)
+        {
+            return View(book);
+        }
+
+        public IActionResult BorrowBook(int id)
         {
             var book = _bookServices.GetBookById(id);
             BookModel bookModel = new BookModel
@@ -70,25 +77,34 @@ namespace Library.Controllers
                 BookName = book.BookName,
                 Author = book.Author
             };
-            return View(bookModel);
-        }
-        
-        public IActionResult Borrower()
-        {
-            BorrowerModel borrower = new BorrowerModel();
-            return View(borrower);
+
+            BorrowedBookModel toBeBorrowed = new BorrowedBookModel
+            {
+                Book = bookModel,
+            };
+
+            return View(toBeBorrowed);
         }
 
-        [HttpPost]
-       public IActionResult Borrower(BorrowerModel model)
+       [HttpPost]
+       public IActionResult BorrowBook(BookModel book, BorrowerModel formBorrower)
         {
             Borrower borrower = new Borrower
             {
-                BorrowerName = model.BorrowerName,
-                Address = model.Address
+                BorrowerName = formBorrower.BorrowerName,
+                Address = formBorrower.Address
             };
-            _borrowerServices.NewBorrower(borrower);
-            return View(model);
+            var returnedBorrower = _borrowerServices.NewBorrower(borrower, true);
+            BorrowedBook borrowed = new BorrowedBook
+            {
+                BookId = book.Id,
+                BorrowerId = returnedBorrower.Id,
+                BorrowedDate = DateTime.Now
+            };
+
+            _borrowedBookServices.InsertBorrowedBook(borrowed);
+
+            return RedirectToAction("Book");
         }
 
         public IActionResult About()
