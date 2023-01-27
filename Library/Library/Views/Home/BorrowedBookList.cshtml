@@ -46,12 +46,12 @@
                 @{
                     if (item.DateReturned.HasValue)
                     {
-                        Html.DisplayFor(modelItem => item.DateReturned);
+                        @Html.DisplayFor(modelItem => item.DateReturned);
                     }
-                else
-                {
-                    <span>Not Returned!</span>
-                }
+                    else
+                    {
+                        <span>Not Returned!</span>
+                    }
 
                 }
             </td>

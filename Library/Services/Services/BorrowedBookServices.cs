@@ -16,6 +16,11 @@ namespace Services.Services
             _borrowedBookRepository = repository;
         }
 
+        public BorrowedBook GetBorrowedBookByBookId(int id)
+        {
+            return _borrowedBookRepository.Table.Where(x => x.BookId == id && !x.DateReturned.HasValue).FirstOrDefault();
+        }
+
         public IEnumerable<BorrowedBook> GetBorrowedBooks()
         {
             return _borrowedBookRepository.Table.ToList();
@@ -26,6 +31,14 @@ namespace Services.Services
             _borrowedBookRepository.Insert(borrowed);
         }
 
+        public bool IsBorrowed(int id)
+        {
+            return _borrowedBookRepository.Table.Where(x => x.Id == id).ToList().Exists(y => !y.DateReturned.HasValue);
+        }
 
+        public void UpdateBorrowedBook(BorrowedBook borrowed)
+        {
+            _borrowedBookRepository.Update(borrowed);
+        }
     }
 }

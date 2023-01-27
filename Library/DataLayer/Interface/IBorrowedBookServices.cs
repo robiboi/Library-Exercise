@@ -9,5 +9,8 @@ namespace DataLayer.Interface
     {
         void InsertBorrowedBook(BorrowedBook borrowed);
         IEnumerable<BorrowedBook> GetBorrowedBooks();
+        bool IsBorrowed(int id);
+        void UpdateBorrowedBook(BorrowedBook borrowed);
+        BorrowedBook GetBorrowedBookByBookId(int id);
     }
 }

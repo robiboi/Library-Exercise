@@ -22,9 +22,15 @@
                 @Html.DisplayFor(modelItem => item.Author)
             </td>
             <td>
-                @Html.ActionLink("Details", "BorrowBook", new { id=item.Id }) 
+                @Html.ActionLink("Details", item.Borrowed? "ReturnBook" : "BorrowBook", new { id=item.Id })
+                @{
+                if (item.Borrowed)
+                {
+                    <span> | Unavailable</span>
+                }
+                }
             </td>
-        </tr>
+        </tr>   
 }
     </tbody>
 </table>

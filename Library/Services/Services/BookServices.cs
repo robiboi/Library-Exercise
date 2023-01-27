@@ -22,6 +22,7 @@ namespace Services.Services
 
         public IEnumerable<Book> GetBooks()
         {
+
             return _bookRepository.Table.ToList();
         }
 
