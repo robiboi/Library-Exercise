@@ -49,6 +49,8 @@ namespace Library.Controllers
         public IActionResult BookList()
         {
             var books = _bookServices.GetBooks();
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
+
             List<BookModel> bookModels = new List<BookModel>();
             foreach(var book in books)
             {
@@ -56,9 +58,15 @@ namespace Library.Controllers
                 {
                     Id = book.Id,
                     BookName = book.BookName,
-                    Author = book.Author
+                    Author = book.Author,
+                    Borrowed = false
                 };
+                if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
+                {
+                    bookModel.Borrowed = true;
+                }
                 bookModels.Add(bookModel);
+
             }
             return PartialView(bookModels);
         }
@@ -105,6 +113,7 @@ namespace Library.Controllers
         public IActionResult BorrowBook(int id)
         {
             var book = _bookServices.GetBookById(id);
+            
             BookModel bookModel = new BookModel
             {
                 Id = book.Id,
@@ -112,31 +121,73 @@ namespace Library.Controllers
                 Author = book.Author
             };
 
-            BorrowedBookModel toBeBorrowed = new BorrowedBookModel
-            {
-                Book = bookModel,
+            BorrowedBookModel toBeBorrowed = new BorrowedBookModel 
+            { 
+                Book = bookModel
             };
 
             return View(toBeBorrowed);
         }
 
        [HttpPost]
-       public IActionResult BorrowBook(BookModel book, BorrowerModel formBorrower)
+       public IActionResult BorrowBook(BorrowedBookModel borrowedBook)
         {
             Borrower borrower = new Borrower
             {
-                BorrowerName = formBorrower.BorrowerName,
-                Address = formBorrower.Address
+                BorrowerName = borrowedBook.Borrower.BorrowerName,
+                Address = borrowedBook.Borrower.Address
             };
-            var returnedBorrower = _borrowerServices.NewBorrower(borrower, true);
+            _borrowerServices.NewBorrower(borrower);
+
             BorrowedBook borrowed = new BorrowedBook
             {
-                BookId = book.Id,
-                BorrowerId = returnedBorrower.Id,
+                BookId = borrowedBook.Book.Id,
+                BorrowerId = borrower.Id,
                 DateBorrowed = DateTime.Now
             };
 
             _borrowedBookServices.InsertBorrowedBook(borrowed);
+
+            return RedirectToAction("Book");
+        }
+
+        public IActionResult ReturnBook(int id)
+        {
+            var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);
+            var book = _bookServices.GetBookById(id);
+            var borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+
+            BookModel bookModel = new BookModel
+            {
+                Id = book.Id,
+                BookName = book.BookName,
+                Author = book.Author
+            };
+
+            BorrowerModel borrowerModel = new BorrowerModel 
+            { 
+                Id = borrower.Id,
+                BorrowerName = borrower.BorrowerName,
+                Address = borrower.Address
+            };
+
+            BorrowedBookModel toBeBorrowed = new BorrowedBookModel
+            {
+                Id = borrowedBook.Id,
+                Book = bookModel,
+                Borrower = borrowerModel,
+                DateBorrowed = borrowedBook.DateBorrowed.Value
+            };
+
+            return View(toBeBorrowed);
+        }
+
+        [HttpPost]
+        public IActionResult ReturnBook(BorrowedBookModel tobeReturned)
+        {
+            var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(tobeReturned.Book.Id);
+            borrowedBook.DateReturned = DateTime.Now;
+            _borrowedBookServices.UpdateBorrowedBook(borrowedBook);
 
             return RedirectToAction("Book");
         }

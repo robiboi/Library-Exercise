@@ -119,7 +119,18 @@ namespace Services
 
         public void Update(T entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
+
+                _context.SaveChanges();
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
 
         public void Update(IEnumerable<T> entities)

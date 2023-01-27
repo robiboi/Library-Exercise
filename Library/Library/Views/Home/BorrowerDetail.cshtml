@@ -1,0 +1,20 @@
+﻿@model Library.Models.BorrowerModel
+
+<div>
+    <h4>Borrowed By</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.BorrowerName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BorrowerName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+    </dl>
+</div>

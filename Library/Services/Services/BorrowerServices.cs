@@ -24,10 +24,5 @@ namespace Services.Services
             _borrowerRepository.Insert(borrower);
         }
 
-        public Borrower NewBorrower(Borrower borrower, bool B = true)
-        {
-            return _borrowerRepository.Insert(borrower, B);
-        }
-
     }
 }
