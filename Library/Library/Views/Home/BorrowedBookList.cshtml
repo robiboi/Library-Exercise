@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Library.Models.BorrowedBookModel>
+
+@{
+    ViewData["Title"] = "BorrowedBookList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>BorrowedBookList</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.BookName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Borrower.BorrowerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateBorrowed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateReturned)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <th>
+                @Html.DisplayFor(model => item.Book.BookName)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Borrower.BorrowerName)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateBorrowed)
+            </td>
+            <td>
+                @{
+                    if (item.DateReturned.HasValue)
+                    {
+                        Html.DisplayFor(modelItem => item.DateReturned);
+                    }
+                else
+                {
+                    <span>Not Returned!</span>
+                }
+
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

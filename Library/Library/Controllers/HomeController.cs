@@ -63,6 +63,40 @@ namespace Library.Controllers
             return PartialView(bookModels);
         }
 
+        public IActionResult BorrowedBookList()
+        {
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
+            List<BorrowedBookModel> borrowedBookModels = new List<BorrowedBookModel>();
+
+            foreach (var borrowedBook in borrowedBooks)
+            {
+                Book book = _bookServices.GetBookById(borrowedBook.BookId);
+                BookModel bookModel = new BookModel
+                {
+                    Id = book.Id,
+                    BookName = book.BookName,
+                    Author = book.Author
+                };
+                Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+                BorrowerModel borrowerModel = new BorrowerModel
+                {
+                    Id = borrower.Id,
+                    BorrowerName = borrower.BorrowerName,
+                    Address = borrower.Address
+                };
+                BorrowedBookModel borrowedBookModel = new BorrowedBookModel
+                {
+                    Id = borrowedBook.Id,
+                    Book = bookModel,
+                    Borrower = borrowerModel,
+                    DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
+                    DateReturned = borrowedBook.DateReturned
+                };
+                borrowedBookModels.Add(borrowedBookModel);
+            }
+            return View(borrowedBookModels);
+        }
+
         public IActionResult BookDetails(BookModel book)
         {
             return View(book);
@@ -99,7 +133,7 @@ namespace Library.Controllers
             {
                 BookId = book.Id,
                 BorrowerId = returnedBorrower.Id,
-                BorrowedDate = DateTime.Now
+                DateBorrowed = DateTime.Now
             };
 
             _borrowedBookServices.InsertBorrowedBook(borrowed);
