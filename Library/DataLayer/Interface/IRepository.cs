@@ -21,6 +21,14 @@ namespace DataLayer.Interface
         void Insert(T entity);
 
         /// <summary>
+        /// Insert entity with returned result
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="returnResult"></param>
+        /// <returns></returns>
+        T Insert(T entity, bool returnResult = true);
+
+        /// <summary>
         /// Insert entities
         /// </summary>
         /// <param name="entities">Entities</param>

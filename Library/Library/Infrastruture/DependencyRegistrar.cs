@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using DataLayer;
 using DataLayer.Interface;
+using Library.Interface;
+using Library.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Services;
@@ -10,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApplication2.Infrastruture
+namespace Library.Infrastruture
 {
     public class DependencyRegistrar : IDependencyRegistrar
     {
@@ -25,6 +27,11 @@ namespace WebApplication2.Infrastruture
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
 
             builder.RegisterType<BookServices>().As<IBookServices>().InstancePerLifetimeScope();
+            builder.RegisterType<BorrowedBookServices>().As<IBorrowedBookServices>().InstancePerLifetimeScope();
+            builder.RegisterType<BorrowerServices>().As<IBorrowerServices>().InstancePerLifetimeScope();
+
+            builder.RegisterType<BookModelServices>().As<IBookModelServices>().InstancePerLifetimeScope();
+            builder.RegisterType<BorrowedBookModelServices>().As<IBorrowedBookModelServices>().InstancePerLifetimeScope();
         }
     }
 }

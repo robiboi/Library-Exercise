@@ -9,5 +9,9 @@ namespace DataLayer.Interface
     {
         void InsertBook(Book book);
         IEnumerable<Book> GetBooks();
+        bool EditBook(Book book);
+        bool DeleteBook(int id);
+        Book GetBookById(int id);
+        bool IsAvailable(int id);
     }
 }

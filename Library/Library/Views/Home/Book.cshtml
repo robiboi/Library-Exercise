@@ -1,4 +1,4 @@
-﻿@model WebApplication2.Models.BookModel
+﻿@model Library.Models.BookModel
 
 @{
     ViewData["Title"] = "Book";
@@ -47,6 +47,11 @@
                 <label asp-for="BookName" class="control-label"></label>
                 <input asp-for="BookName" class="form-control" />
                 <span asp-validation-for="BookName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author" class="control-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" id="SubmitBtn" class="btn btn-default" />

@@ -10,5 +10,7 @@ namespace DataLayer.Interface
         void NewBorrower(Borrower borrower);
         void GetBorrower(Borrower borrower);
 
+        Borrower GetBorrowerById(int id);
+
     }
 }

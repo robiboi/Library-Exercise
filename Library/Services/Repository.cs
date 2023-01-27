@@ -37,17 +37,41 @@ namespace Services
         }
         public void Delete(T entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
+
+                Entities.Remove(entity);
+                _context.SaveChanges();
+            }
+            catch(ValidationException dbEx)
+            {
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
 
         public void Delete(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entities == null)
+                    throw new ArgumentNullException(nameof(entities));
+
+                foreach (var entity in entities)
+                    Entities.Remove(entity);
+
+                _context.SaveChanges();
+            }
+            catch(ValidationException dbEx)
+            {
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
 
         public T GetById(object id)
         {
-            throw new NotImplementedException();
+            return Entities.Find(id);
         }
 
         public void Insert(T entity)
@@ -66,6 +90,26 @@ namespace Services
                 //ensure that the detailed error text is saved in the Log
                 throw new Exception(dbEx.Message, dbEx);
             }
+        }
+
+        public T Insert(T entity, bool returnResult = true)
+        {
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
+
+                Entities.Add(entity);
+
+                _context.SaveChanges();
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
+
+            return entity;
         }
 
         public void Insert(IEnumerable<T> entities)
@@ -89,12 +133,34 @@ namespace Services
 
         public void Update(T entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
+
+                _context.SaveChanges();
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
 
         public void Update(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entities == null)
+                    throw new ArgumentNullException(nameof(entities));
+
+                _context.SaveChanges();
+            }
+            catch (ValidationException dbEx)
+            {
+                //ensure that the detailed error text is saved in the Log
+                throw new Exception(dbEx.Message, dbEx);
+            }
         }
     }
 }
