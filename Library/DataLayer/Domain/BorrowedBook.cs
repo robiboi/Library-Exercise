@@ -8,8 +8,8 @@ namespace DataLayer.Domain
     {
         public int BookId { get; set; }
         public int BorrowerId { get; set; }
-        public DateTime? BorrowedDate { get; set; }
-        public DateTime? ReturnedDate { get; set; }
+        public DateTime? DateBorrowed { get; set; }
+        public DateTime? DateReturned { get; set; }
 
     }
 }

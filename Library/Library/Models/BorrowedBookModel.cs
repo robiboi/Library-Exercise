@@ -11,7 +11,7 @@ namespace Library.Models
         public int Id { get; set; }
         public BookModel Book { get; set; }
         public BorrowerModel Borrower { get; set; }
-        public DateTime BorrowedDate { get; set; }
-        public DateTime ReturnedDate { get; set; }
+        public DateTime DateBorrowed { get; set; }
+        public DateTime? DateReturned { get; set; }
     }
 }
