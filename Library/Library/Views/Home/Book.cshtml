@@ -9,7 +9,7 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-       
+
             $.ajax({
                  type: "GET",
                  url: "@Url.Action("BookList", "Home")",
@@ -18,13 +18,27 @@
                  }
             });
 
-            $("#SubmitBtn").click(function () {
+            $("#CreateBtn").click(function () {
+                $('#CreateBookModal').modal('show');
+            });
+
+            
+
+            $("#SubmitBtn").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("Book", "Home")",
-                    data: $("#BookForm").serialize()
+                    data: $("#BookForm").serialize(),
+                    success: function (data) {
+                        $("#CreateBookModal").modal('hide');
+                        $("#BookDetail").html(data);
+                        $("#bookName").val('');
+                        $("#author").val('');
+                        
+
+                    }
                 });
             });
         });
@@ -32,31 +46,44 @@
 }
 
 <h2>Book</h2>
-
 <h4>BookModel</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Book" id="BookForm">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BookName" class="control-label"></label>
-                <input asp-for="BookName" class="form-control" />
-                <span asp-validation-for="BookName" class="text-danger"></span>
+
+<button class="btn btn-primary" id="CreateBtn">Create Book!</button>
+<hr />
+<div class="modal" id="CreateBookModal" tabindex="-1" hidden>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Book Form</h5>
             </div>
-            <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" />
-                <span asp-validation-for="Author" class="text-danger"></span>
+            <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <form asp-action="Book" id="BookForm">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="BookName" class="control-label"></label>
+                                    <input asp-for="BookName" id="bookName" class="form-control" />
+                                    <span asp-validation-for="BookName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Author" class="control-label"></label>
+                                    <input asp-for="Author" id="author"class="form-control" />
+                                    <span asp-validation-for="Author" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Create" id="SubmitBtn" class="btn btn-default" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" id="SubmitBtn" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
-    <div class="container" id="BookDetail">
-        
+        </div>
     </div>
 </div>
+<div class="container" id="BookDetail"></div>
+
+
 
 

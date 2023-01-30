@@ -43,7 +43,28 @@ namespace Library.Controllers
                 Author = model.Author
             };
             _bookServices.InsertBook(book);
-            return View(model);
+            var books = _bookServices.GetBooks();
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
+
+            List<BookModel> bookModels = new List<BookModel>();
+            foreach (var b in books)
+            {
+                BookModel bookModel = new BookModel
+                {
+                    Id = b.Id,
+                    BookName = b.BookName,
+                    Author = b.Author,
+                    Borrowed = false
+                };
+                if (borrowedBooks.Exists(x => x.BookId == b.Id && !x.DateReturned.HasValue))
+                {
+                    bookModel.Borrowed = true;
+                }
+                bookModels.Add(bookModel);
+
+            }
+
+            return PartialView("BookList", bookModels);
         }
 
         public IActionResult BookList()
