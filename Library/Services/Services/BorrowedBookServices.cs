@@ -31,6 +31,11 @@ namespace Services.Services
             _borrowedBookRepository.Insert(borrowed);
         }
 
+        public void InsertBorrowedBooks(IEnumerable<BorrowedBook> borrowedBooks)
+        {
+            _borrowedBookRepository.Insert(borrowedBooks);
+        }
+
         public bool IsBorrowed(int id)
         {
             return _borrowedBookRepository.Table.Where(x => x.Id == id).ToList().Exists(y => !y.DateReturned.HasValue);

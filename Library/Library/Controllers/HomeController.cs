@@ -172,6 +172,12 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
+        public JsonResult BorrowBooks([FromBody]BookModel bookModel)
+        {
+            return Json(new { });
+        }
+
+
         public IActionResult ReturnBook(int id)
         {
             var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);

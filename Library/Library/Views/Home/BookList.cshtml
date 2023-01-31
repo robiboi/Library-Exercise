@@ -1,36 +1,76 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BookName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.ActionLink("Details", item.Borrowed? "ReturnBook" : "BorrowBook", new { id=item.Id })
-                @{
-                if (item.Borrowed)
-                {
-                    <span> | Unavailable</span>
-                }
-                }
-            </td>
-        </tr>   
-}
-    </tbody>
-</table>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ids = [];
+            $(".form-check-input").click(function () {
+                ids.push(this.value);
+                console.log(ids);
+            });
+
+            $("#borrowBtn").click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: "POST",
+                    dataType: "json",
+                    url: "@Url.Action("BorrowBooks", "Home")",
+                    data: { "Id": 1, "BookName": "MyName", "Author": "MyAuthor", "Borrowed": true },
+                    contentType: "application/json",
+                    success: function (data) {
+                        
+                    }
+                });
+            });
+        });
+
+    </script>
+
+
+<form asp-action-for="BorrowBooks" id="borrowBooksForm">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Borrow
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Author)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <input class="form-check-input" type="checkbox" value="@item.Id" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id })
+                        @{
+                            if (item.Borrowed)
+                            {
+                                <span> | Unavailable</span>
+                            }
+                        }
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary" id="borrowBtn">Borrow</button>
+</form>
