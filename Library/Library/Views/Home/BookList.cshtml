@@ -1,36 +1,47 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BookName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.ActionLink("Details", item.Borrowed? "ReturnBook" : "BorrowBook", new { id=item.Id })
-                @{
-                if (item.Borrowed)
+    <form asp-action="BatchBorrow">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.BookName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Author)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
                 {
-                    <span> | Unavailable</span>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="form-check-input" name="ids" value="@item.Id" disabled="@item.Borrowed"/>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BookName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Author)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id })
+                            @{
+                                if (item.Borrowed)
+                                {
+                                    <span> | Unavailable</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
                 }
-                }
-            </td>
-        </tr>   
-}
-    </tbody>
-</table>
+
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Borrow</button>
+    </form>

@@ -8,24 +8,49 @@
 @section Scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
-       
-            $.ajax({
-                 type: "GET",
-                 url: "@Url.Action("BookList", "Home")",
-                 success: function (data) {
-                    $("#BookDetail").html(data);
-                 }
-            });
 
-            $("#SubmitBtn").click(function () {
+        function fetchBookList() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("BookList", "Home")",
+                success: function (data) {
+                    $("#BookDetail").html(data);
+                }
+            });
+        }
+
+        function closeModal() {
+            $("#BookModal").modal("hide");
+            $("#BookName").val('');
+            $("#Author").val('');
+        }
+
+        $(document).ready(function () {
+
+            fetchBookList();
+
+            $("#OpenModalBtn").click(function () {
+                $("#BookModal").modal({ backdrop: "static" });
+                $("#BookModal").modal("show");
+            })
+
+            $("#CloseModalBtn").click(function () {
+                closeModal();
+            })
+
+            $("#BookForm").submit(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("Book", "Home")",
-                    data: $("#BookForm").serialize()
+                    data: $("#BookForm").serialize(),
+                    success: function (data) {
+                        closeModal();
+                        fetchBookList();
+                    }
                 });
+
             });
         });
     </script>
@@ -35,27 +60,44 @@
 
 <h4>BookModel</h4>
 <hr />
+
+<button class="btn btn-primary" id="OpenModalBtn">Create Book</button>
+
+<hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Book" id="BookForm">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BookName" class="control-label"></label>
-                <input asp-for="BookName" class="form-control" />
-                <span asp-validation-for="BookName" class="text-danger"></span>
+    <div class="modal" tabindex="-1" role="dialog" id="BookModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create a Book</h4>
+                </div>
+                <form asp-action="Book" id="BookForm">
+                    <div class="modal-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="BookName" class="control-label"></label>
+                            <input asp-for="BookName" id="BookName" class="form-control" />
+                            <span asp-validation-for="BookName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Author" class="control-label"></label>
+                            <input asp-for="Author" id="Author" class="form-control" />
+                            <span asp-validation-for="Author" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Create" id="SubmitBtn" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" id="CloseModalBtn">Close</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" id="SubmitBtn" class="btn btn-default" />
-            </div>
-        </form>
+        </div>
     </div>
+    
     <div class="container" id="BookDetail">
-        
+
     </div>
 </div>
 

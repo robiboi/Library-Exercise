@@ -1,0 +1,50 @@
+﻿@using Newtonsoft.Json
+@model Library.Models.BorrowedBooksModel
+
+@{
+    ViewData["Title"] = "BorrowBooks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("SubmitBtn").click(function () {
+                
+                var data = {
+                    "Books": $(input[name = "ids"]).val(),
+                    "Borrower": [
+                        "BorrowerName": $("#BorrowerName").val(),
+                        "Address": $("#Address").val()
+                    ]
+                };
+
+                $.ajax({
+                    method: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "@Url.Action("BorrowBooks", "Home")",
+                    data: JSON.stringify(data)
+                });
+            });
+        });
+    </script>
+}*@
+
+<form asp-action="BorrowBooks">
+    @{
+        foreach (var book in Model.Books)
+        {
+            <input type="hidden" value="@book.Id" name="BookIds" />
+            <partial name="BookDetails" model="book" />
+        }
+    }
+
+    @Html.EditorFor(e => e.Borrower)
+    <div class="form-group">
+        <button class="btn btn-default" id="SubmitBtn">Borrow</button>
+    </div>
+</form>
+<div>
+    <a asp-action="Book">Back to List</a>
+</div>
