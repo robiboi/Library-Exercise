@@ -172,9 +172,54 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
-        public JsonResult BorrowBooks([FromBody]BookModel bookModel)
+        public JsonResult BorrowBooks([FromBody]List<int> bookIds)
         {
-            return Json(new { });
+            BooksBorrowedModel booksBorrowedModel = new BooksBorrowedModel();
+
+            foreach(var id in bookIds)
+            {
+                Book book = _bookServices.GetBookById(id);
+                BookModel bookModel = new BookModel();
+                bookModel.Author = book.Author;
+                bookModel.BookName = book.BookName;
+                bookModel.Id = book.Id;
+                booksBorrowedModel.Books.Add(bookModel);
+            }
+            booksBorrowedModel.Borrower = new BorrowerModel();
+            
+            return Json(booksBorrowedModel);
+        }
+
+        public IActionResult SubmitBorrowBooks([FromBody]SubmitBorrowBooksModel submitBorrowBooksModel)
+        {
+            try
+            {
+                Borrower borrower = new Borrower
+                {
+                    BorrowerName = submitBorrowBooksModel.BorrowerName,
+                    Address = submitBorrowBooksModel.Address
+                };
+                _borrowerServices.NewBorrower(borrower);
+
+                foreach (var id in submitBorrowBooksModel.BookIds)
+                {
+                    BorrowedBook borrowed = new BorrowedBook
+                    {
+                        BookId = id,
+                        BorrowerId = borrower.Id,
+                        DateBorrowed = DateTime.Now
+                    };
+
+                    _borrowedBookServices.InsertBorrowedBook(borrowed);
+                }
+            }
+            catch(Exception ex)
+            {
+                //logging
+
+                throw new Exception(ex.Message, ex);
+            }
+            return RedirectToAction("Book");
         }
 
 

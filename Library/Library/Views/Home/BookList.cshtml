@@ -15,18 +15,101 @@
                     method: "POST",
                     dataType: "json",
                     url: "@Url.Action("BorrowBooks", "Home")",
-                    data: { "Id": 1, "BookName": "MyName", "Author": "MyAuthor", "Borrowed": true },
+                    data: JSON.stringify(ids),
                     contentType: "application/json",
                     success: function (data) {
-                        
+                        debugger;
+                        // populate data to fields
+                        var bookDetail = $("#BookDetailModal").find(".book-detail").clone();
+                        var booksHtml = '';
+                        for (var i = 0; i < data.books.length; i++) {
+                            $(bookDetail).find("input[name='hidden-id']").val(data.books[i].id);
+                            $(bookDetail).find(".book-id-value").text(data.books[i].id);
+                            $(bookDetail).find(".book-name-value").text(data.books[i].bookName);
+                            $(bookDetail).find(".book-author-value").text(data.books[i].author);
+                            booksHtml += bookDetail.html();
+                        }
+                        $("#BookDetailModal").find(".book-detail-area").html(booksHtml);
+                        $("#BookDetailModal").modal('show');
                     }
+                });
+            });
+
+            $("#SubmitBorrowedBooks").click(function (e) {
+                e.preventDefault();
+                debugger;
+
+                var ids = [];
+                $.each($("#BookDetailModal").find("input[name='hidden-id']"), function (i) {
+                    ids.push($(this).val());
+                });
+
+                var jsonData = {
+                    "bookIds": ids,
+                    "borrowerName": $("#BookDetailModal input[name='BorrowerName']").val(),
+                    "address": $("#BookDetailModal input[name='Address']").val()
+                };
+
+                $.ajax({
+                    method: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(jsonData),
+                    url: '@Url.Action("SubmitBorrowBooks", "Home")',
+                    contentType: "application/json"
                 });
             });
         });
 
     </script>
 
+<div class="modal" tabindex="-1" hidden id="BookDetailModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Borrower Form</h5>
+            </div>
+            <div class="modal-body">
+                <div class="book-detail-area">
+                    <div class="book-detail row">
+                        <div class="book-id">
+                            <input type="hidden" name="hidden-id" />
+                            <label>Book Id:</label>
+                            <div class="book-id-value">1</div>
+                        </div>
+                        <div class="book-name">
+                            <label>Book Name:</label>
+                            <div class="book-name-value">Book Name</div>
+                        </div>
+                        <div class="book-author">
+                            <label>Book Author:</label>
+                            <div class="book-author-value">Book Author</div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <h4>Borrower Detail</h4>
+                    <div class="row">
 
+                        <div class="col-md-4">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label for="BorrowerName" class="control-label">Borrower Name</label>
+                                <input type="text" name="BorrowerName" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Address" class="control-label">Address</label>
+                                <input type="text" name="Address" class="form-control" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <button id="SubmitBorrowedBooks">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
 <form asp-action-for="BorrowBooks" id="borrowBooksForm">
     <table class="table">
         <thead>
