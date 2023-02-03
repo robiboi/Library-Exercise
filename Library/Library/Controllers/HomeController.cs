@@ -52,6 +52,7 @@ namespace Library.Controllers
         {
             var books = _bookServices.GetBooks();
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
+            var borrowers = _borrowerServices.GetBorrowers().ToList();
 
             List<BookModel> bookModels = new List<BookModel>();
             foreach (var book in books)
@@ -64,9 +65,18 @@ namespace Library.Controllers
                     PublishedDate = book.PublishedDate,
                     Borrowed = false
                 };
+
                 if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
                 {
+                    var borrowedBook = borrowedBooks.Find(x => x.BookId == book.Id && !x.DateReturned.HasValue);
+                    var borrower = borrowers.Find(y => y.Id == borrowedBook.BorrowerId);
                     bookModel.Borrowed = true;
+                    bookModel.Borrower = new BorrowerModel
+                    {
+                        Id = borrower.Id,
+                        BorrowerName = borrower.BorrowerName,
+                        Address = borrower.Address
+                    };
                 }
                 bookModels.Add(bookModel);
             }
@@ -124,48 +134,6 @@ namespace Library.Controllers
         public IActionResult BookDetails(BookModel book)
         {
             return View(book);
-        }
-
-        public IActionResult BorrowBook(int id)
-        {
-            var book = _bookServices.GetBookById(id);
-
-            BookModel bookModel = new BookModel
-            {
-                Id = book.Id,
-                BookName = book.BookName,
-                Author = book.Author,
-                PublishedDate = book.PublishedDate
-            };
-
-            BorrowedBookModel toBeBorrowed = new BorrowedBookModel
-            {
-                Book = bookModel
-            };
-
-            return View(toBeBorrowed);
-        }
-
-        [HttpPost]
-        public IActionResult BorrowBook(BorrowedBookModel borrowedBook)
-        {
-            Borrower borrower = new Borrower
-            {
-                BorrowerName = borrowedBook.Borrower.BorrowerName,
-                Address = borrowedBook.Borrower.Address
-            };
-            _borrowerServices.NewBorrower(borrower);
-
-            BorrowedBook borrowed = new BorrowedBook
-            {
-                BookId = borrowedBook.Book.Id,
-                BorrowerId = borrower.Id,
-                DateBorrowed = DateTime.Now
-            };
-
-            _borrowedBookServices.InsertBorrowedBook(borrowed);
-
-            return RedirectToAction("Book");
         }
 
         public JsonResult BatchBorrow([FromBody] List<int> ids)

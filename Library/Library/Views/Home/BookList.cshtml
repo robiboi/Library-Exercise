@@ -1,14 +1,35 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
 <style>
-    .accordion-header {
+    .sm-mb-2 {
+        margin-bottom: 2px;
+    }
+
+    .flex-align-center {
         display: flex;
         align-items: center;
     }
 
-    .accordion-btn {
+    .book-list-header {
+        padding: 5px 0px;
+        background-color: transparent;
+    }
+
+    .accordion {
+        background-color: #e5e5e5;
+    }
+
+    .accordion-header {
         background-color: #eee;
         color: #444;
+    }
+
+        .accordion-active, .accordion-header:hover {
+            background-color: #ccc;
+        }
+
+    .accordion-btn {
+        background-color: transparent;
         cursor: pointer;
         padding: 18px;
         border: none;
@@ -16,23 +37,14 @@
         outline: none;
         font-size: 15px;
         transition: 0.4s;
+        font-weight: bold;
     }
-
-        .accordion-active, .accordion-btn:hover {
-            background-color: #ccc;
-        }
 
     .panel {
-        padding: 0 18px;
-        max-height: 0;
-        background-color: white;
+        padding: 10px 18px;
+        display: none;
         overflow: hidden;
-        transition: max-height 0.2s ease-out;
     }
-
-        .panel-active {
-            max-height: fit-content !important;
-        }
 </style>
 
 <script type="text/javascript">
@@ -57,12 +69,13 @@
                 console.log(ids);
             }
 
-            $(".accordion-btn").click(function () {
-                $(this).toggleClass("accordion-active");
-                $(this).parent().next().toggleClass("panel-active");
+            $(".accordion-btn").click(function (e) {
+                e.preventDefault();
+                $(this).parent().toggleClass("accordion-active");
+                $(this).parent().next().slideToggle("fast");
             });
 
-            $("#select-all").change(function () {
+            $("#select-all").click(function () {
                 if (this.checked) {
                     $(".form-check-input").each(function () {
                         if (!this.disabled && !this.checked) {
@@ -139,7 +152,7 @@
             </div>
             <div class="modal-body">
                 <form asp-action="BorrowBooks">
-                    <div class="book-detail-area">
+                    <div class="book-detail-area container-fluid">
                         <div class="book-detail row">
                             <div class="book-id">
                                 <input type="hidden" name="BookIds" />
@@ -186,76 +199,100 @@
 </div>
 
 <form asp-action-for="BatchBorrow" id="borrowBooksForm">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    <input type="checkbox" id="select-all" />
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.BookName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Author)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PublishedDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
 
-        <tbody>
+    <div class="container-fluid accordion-active sm-mb-2">
+        <div class="book-list-header row flex-align-center">
+            <input type="checkbox" class="col-md-1 col-xs-1" id="select-all" />
+        </div>
+    </div>
 
-            @foreach (var item in Model)
-            {
-                <tr class="book-list-item">
-                    <td>
-                        <input class="form-check-input" type="checkbox" value="@item.Id" disabled="@item.Borrowed" />
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BookName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Author)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PublishedDate)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id }) |
-                        @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id })
-                    </td>
-                    <td>
-                        @{
-                            if (item.Borrowed)
-                            {
-                                <span class="badge">Unavailable</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-primary">Available</span>
-                            }
+    @foreach (var item in Model)
+    {
+        <div class="accordion container-fluid sm-mb-2">
+            <div class="accordion-header row flex-align-center">
+                <input class="form-check-input col-md-1 col-xs-1" type="checkbox" value="@item.Id" disabled="@item.Borrowed" />
+                <button class="accordion-btn col-md-11 col-xs-11">
+                    @item.BookName
+                    @{
+                        if (item.Borrowed)
+                        {
+                            <span class="badge">Unavailable</span>
                         }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        else
+                        {
+                            <span class="badge bg-primary">Available</span>
+                        }
+                    }
+                </button>
+            </div>
+            <div class="panel">
+                <div class="row">
+                    <dl class="dl-horizontal col-md-6 col-xs-12">
+                        <dt>
+                            @Html.DisplayNameFor(model => item.Id)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => item.Id)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => item.BookName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => item.BookName)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => item.Author)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => item.Author)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => item.PublishedDate)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => item.PublishedDate)
+                        </dd>
+                    </dl>
+
+                    @{
+                        if (item.Borrowed)
+                        {
+                            <dl class="dl-horizontal col-md-6 col-xs-12">
+                                <dt>
+                                    @Html.DisplayNameFor(model => item.Borrower.Id)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => item.Borrower.Id)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => item.Borrower.BorrowerName)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => item.Borrower.BorrowerName)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => item.Borrower.Address)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => item.Borrower.Address)
+                                </dd>
+                            </dl>
+                        }
+
+                    }
+                </div>
+                <hr>
+                @{
+                    if (item.Borrowed)
+                    {
+                        @Html.ActionLink("Return", "ReturnBook", new { id = item.Id })
+                        <span> | </span>
+                    }
+                }
+                @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id })
+            </div>
+        </div>
+    }
+    <hr />
     <button class="btn btn-primary" id="borrowBtn" disabled>Borrow</button>
 </form>
-
-<div class="accordion container-fluid">
-    <div class="accordion-header row">
-        <input class="col-md-1" type="checkbox" />
-        <button class="accordion-btn col-md-11">Section 1</button>
-    </div>
-    <div class="panel">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
-</div>
-
-<button class="accordion">Section 2</button>
-<div class="panel">
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-</div>

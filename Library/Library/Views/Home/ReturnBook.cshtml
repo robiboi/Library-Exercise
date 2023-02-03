@@ -7,12 +7,12 @@
 
 <div>
     <form asp-action="ReturnBook">
-
+        <h2>@Html.DisplayFor(model => model.Book.BookName)</h2>
         <div hidden>
             @Html.EditorFor(e => e.Book)
         </div>
         <partial name="BookDetails" model="Model.Book" />
-        <partial name="BorrowerDetail" model="Model.Borrower"/>
+        <partial name="BorrowerDetail" model="Model.Borrower" />
 
         <div hidden>
             @Html.EditorFor(e => e.Borrower)
