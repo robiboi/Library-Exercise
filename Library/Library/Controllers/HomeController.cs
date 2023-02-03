@@ -73,6 +73,7 @@ namespace Library.Controllers
         {
             var books = _bookServices.GetBooks();
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
+            var borrowers = _borrowerServices.GetBorrowers().ToList();
 
             List<BookModel> bookModels = new List<BookModel>();
             foreach(var book in books)
@@ -87,7 +88,15 @@ namespace Library.Controllers
                 };
                 if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
                 {
+                    var borrowedBook = borrowedBooks.Find(x => x.BookId == book.Id && !x.DateReturned.HasValue);
+                    var borrower = borrowers.Find(y => y.Id == borrowedBook.BorrowerId);
                     bookModel.Borrowed = true;
+                    bookModel.Borrower = new BorrowerModel
+                    {
+                        Id = borrower.Id,
+                        BorrowerName = borrower.BorrowerName,
+                        Address = borrower.Address
+                    };
                 }
                 bookModels.Add(bookModel);
 

@@ -2,6 +2,7 @@
 using DataLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Services.Services
@@ -19,9 +20,15 @@ namespace Services.Services
             return _borrowerRepository.GetById(id);
         }
 
+        public IEnumerable<Borrower> GetBorrowers()
+        {
+            return _borrowerRepository.Table.ToList();
+        }
+
         public void NewBorrower(Borrower borrower)
         {
             _borrowerRepository.Insert(borrower);
+
         }
 
     }

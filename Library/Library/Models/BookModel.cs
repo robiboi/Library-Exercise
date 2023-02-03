@@ -12,5 +12,6 @@ namespace Library.Models
         public string Author { get; set; }
         public DateTime PublishedDate { get; set; }
         public bool Borrowed { get; set; }
+        public BorrowerModel Borrower { get; set; }
     }
 }
