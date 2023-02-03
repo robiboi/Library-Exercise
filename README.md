@@ -1,5 +1,5 @@
-Work is on BorrowedBook Branch since there is conflict on main branch.
-Implemented this week's tasks except for the hot fetch upon clicking the accordion.
+<div>***Work is on BorrowedBook Branch since there is conflict on main branch.
+Implemented this week's tasks except for the hot fetch upon clicking the accordion.***</div>
 
 
 Database
