@@ -1,48 +1,66 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
-    @*<script type="text/javascript">
-        $(document).ready(function () {
-            var ids = [];
-            $(".form-check-input").click(function () {
-                ids.push(this.value);
-                console.log(ids);
-            });
+<script type="text/javascript">
 
-            $("#borrowBtn").click(function (e) {
-                e.preventDefault();
-
-                $.ajax({
-                    method: "POST",
-                    dataType: "json",
-                    url: "@Url.Action("BorrowBooks", "Home")",
-                    data: JSON.stringify({ ids }),
-                    contentType: "application/json",
-                    success: function (data) {
-                        alert(data);
-                        $(".testing").HTML(data);
-                    },
-                    error: function (x) {
-                        console.log(x);
+    $(document).ready(function () {
+        $("#borrowBtn").hide();
+        $(".form-check-input").click(function () {
+            if (this.checked) {
+                $("#borrowBtn").show();
+                var unChecked = 0;
+                $(".form-check-input").each(function () {
+                    if (!this.checked && !this.disabled) {
+                        unChecked += 1;
                     }
                 });
-            });
+                if (unChecked == 0) {
+                    $("#selectAll").prop("checked", true);
+                }
+            }
+            else {
+                if ($(".form-check-input").filter(":checked").length == 0) {
+                    $("#borrowBtn").hide();
+                }
+                $("#selectAll").prop("checked", false);
+            }
         });
 
-    </script>*@
-
+        $("#selectAll").click(function () {
+            if (this.checked) {
+                $("#borrowBtn").show();
+                $(".form-check-input").each(function () {
+                    if (!this.disabled && !this.checked) {
+                        $(this).prop("checked",true);
+                    }
+                });
+            }
+            else {
+                $("#borrowBtn").hide();
+                $(".form-check-input").each(function () {
+                    if (!this.disabled) {
+                        $(this).prop("checked", false);
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 <form asp-action="BorrowBooks" id="borrowBooksForm">
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    Borrow
+                    <input type="checkbox" id="selectAll" />
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.BookName)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Author)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublishedDate)
                 </th>
                 <th></th>
             </tr>
@@ -52,10 +70,8 @@
 
             @foreach (var item in Model)
             {
-
-
                 <tr>
-                    <td>
+                    <td class="cbox">
                         <input class="form-check-input" type="checkbox" name="ids" value="@item.Id" disabled="@item.Borrowed" />
                     </td>
                     <td>
@@ -65,21 +81,25 @@
                         @Html.DisplayFor(modelItem => item.Author)
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.PublishedDate)
+                    </td>
+                    <td>
                         @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id })
                         @{
                             if (item.Borrowed)
                             {
                                 <span> | Unavailable</span>
                             }
+                            else
+                            {
+                                <span class="badge badge-pill badge-success">Available</span>
+                            }
                         }
                     </td>
                 </tr>
-
             }
         </tbody>
     </table>
     <button type="submit" class="btn btn-primary" id="borrowBtn">Borrow</button>
 </form>
-<div class="testing">
 
-</div>

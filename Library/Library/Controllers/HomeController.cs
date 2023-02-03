@@ -40,7 +40,8 @@ namespace Library.Controllers
             Book book = new Book
             {
                 BookName = model.BookName,
-                Author = model.Author
+                Author = model.Author,
+                PublishedDate = model.PublishedDate,
             };
             _bookServices.InsertBook(book);
             var books = _bookServices.GetBooks();
@@ -54,7 +55,8 @@ namespace Library.Controllers
                     Id = b.Id,
                     BookName = b.BookName,
                     Author = b.Author,
-                    Borrowed = false
+                    Borrowed = false,
+                    PublishedDate = b.PublishedDate,
                 };
                 if (borrowedBooks.Exists(x => x.BookId == b.Id && !x.DateReturned.HasValue))
                 {
@@ -80,6 +82,7 @@ namespace Library.Controllers
                     Id = book.Id,
                     BookName = book.BookName,
                     Author = book.Author,
+                    PublishedDate = book.PublishedDate,
                     Borrowed = false
                 };
                 if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
@@ -104,7 +107,8 @@ namespace Library.Controllers
                 {
                     Id = book.Id,
                     BookName = book.BookName,
-                    Author = book.Author
+                    Author = book.Author,
+                    PublishedDate = book.PublishedDate
                 };
                 Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
                 BorrowerModel borrowerModel = new BorrowerModel
@@ -139,7 +143,9 @@ namespace Library.Controllers
             {
                 Id = book.Id,
                 BookName = book.BookName,
-                Author = book.Author
+                Author = book.Author,
+                PublishedDate = book.PublishedDate
+
             };
 
             BorrowedBookModel toBeBorrowed = new BorrowedBookModel 
@@ -188,6 +194,8 @@ namespace Library.Controllers
                     Id = bookId.Id,
                     BookName = bookId.BookName,
                     Author = bookId.Author,
+                    PublishedDate = bookId.PublishedDate
+
                 };
 
                 borrowedBooks.Books.Add(bookmodel);
@@ -231,7 +239,8 @@ namespace Library.Controllers
             {
                 Id = book.Id,
                 BookName = book.BookName,
-                Author = book.Author
+                Author = book.Author,
+                PublishedDate = book.PublishedDate
             };
 
             BorrowerModel borrowerModel = new BorrowerModel 

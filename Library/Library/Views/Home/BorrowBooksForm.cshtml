@@ -13,6 +13,7 @@
     @{
         foreach (var book in Model.Books)
         {
+            <div class="accordion" id="ac"></div>
             <h2>@book.BookName</h2>
             <input type="hidden" value="@book.Id" name="Ids" />
             <partial name="BookDetails" model="book" />
