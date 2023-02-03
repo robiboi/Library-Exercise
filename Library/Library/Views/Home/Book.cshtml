@@ -85,7 +85,11 @@
                             <input asp-for="Author" id="Author" class="form-control" />
                             <span asp-validation-for="Author" class="text-danger"></span>
                         </div>
-
+                        <div class="form-group">
+                            <label asp-for="PublishedDate" class="control-label"></label>
+                            <input asp-for="PublishedDate" id="PublishedDate" class="form-control" />
+                            <span asp-validation-for="PublishedDate" class="text-danger"></span>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <input type="submit" value="Create" id="SubmitBtn" class="btn btn-primary" />
@@ -95,10 +99,7 @@
             </div>
         </div>
     </div>
-    
-    <div class="container" id="BookDetail">
 
+    <div class="container" id="BookDetail">
     </div>
 </div>
-
-

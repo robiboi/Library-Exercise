@@ -1,47 +1,261 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
-    <form asp-action="BatchBorrow">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.BookName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Author)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="form-check-input" name="ids" value="@item.Id" disabled="@item.Borrowed"/>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.BookName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Author)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id }) |
-                            @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id })
-                            @{
-                                if (item.Borrowed)
-                                {
-                                    <span> | Unavailable</span>
-                                }
-                            }
-                        </td>
-                    </tr>
+<style>
+    .accordion-header {
+        display: flex;
+        align-items: center;
+    }
 
+    .accordion-btn {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+    }
+
+        .accordion-active, .accordion-btn:hover {
+            background-color: #ccc;
+        }
+
+    .panel {
+        padding: 0 18px;
+        max-height: 0;
+        background-color: white;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+
+        .panel-active {
+            max-height: fit-content !important;
+        }
+</style>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            var ids = [];
+            var bookDetail = $("#BookDetailModal").find(".book-detail").clone();
+
+            function selectBook(item) {
+                    if (item.checked) {
+                        ids.push(item.value);
+                    }
+                    else {
+                        ids.pop(item.value);
+                    }
+
+                    if (ids.length == 0) {
+                        $("#borrowBtn").prop("disabled", true);
+                    }
+                    else {
+                        $("#borrowBtn").removeAttr("disabled");
+                    }
+                console.log(ids);
+            }
+
+            $(".accordion-btn").click(function () {
+                $(this).toggleClass("accordion-active");
+                $(this).parent().next().toggleClass("panel-active");
+            });
+
+            $("#select-all").change(function () {
+                if (this.checked) {
+                    $(".form-check-input").each(function () {
+                        if (!this.disabled && !this.checked) {
+                            this.checked = true;
+                            selectBook(this);
+                        }
+                    });
+                } else {
+                    $(".form-check-input").each(function () {
+                        if (!this.disabled) {
+                            this.checked = false;
+                            selectBook(this);
+                        }
+                    });
                 }
+            });
 
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-primary">Borrow</button>
-    </form>
+            $(".form-check-input").click(function () {
+                if (this.checked) {
+                    var unChecked = 0;
+
+                    $(".form-check-input").each(function () {
+                        if (!this.checked && !this.disabled) {
+                            unChecked = 1;
+                        }
+                    });
+
+                    if (unChecked == 0) {
+                        $("#select-all").prop("checked", true);
+                    }
+                }
+                else {
+                    $("#select-all").prop("checked", false);
+                }
+                selectBook(this);
+            });
+
+            $('#BookDetailModal').on('hidden.bs.modal', function () {
+                $("#BookDetailModal").find(".book-detail-area").html('');
+            });
+
+            $("#borrowBtn").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    method: "POST",
+                    dataType: "json",
+                    url: "@Url.Action("BatchBorrow", "Home")",
+                    data: JSON.stringify(ids),
+                    contentType: "application/json",
+                    success: function (data) {
+                        // populate data to fields
+                        var booksHtml = '';
+                        for (var i = 0; i < data.books.length; i++) {
+                            $(bookDetail).find("input[name='BookIds']").val(data.books[i].id);
+                            $(bookDetail).find(".book-id-value").text(data.books[i].id);
+                            $(bookDetail).find(".book-name-value").text(data.books[i].bookName);
+                            $(bookDetail).find(".book-author-value").text(data.books[i].author);
+                            $(bookDetail).find(".book-published-date-value").text(new Date(data.books[i].publishedDate).toDateString());
+                            booksHtml += bookDetail.html();
+                        }
+                        $("#BookDetailModal").find(".book-detail-area").html(booksHtml);
+                        $("#BookDetailModal").modal('show');
+                    }
+                });
+            });
+        });
+</script>
+
+<div class="modal" tabindex="-1" hidden id="BookDetailModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Borrower Form</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="BorrowBooks">
+                    <div class="book-detail-area">
+                        <div class="book-detail row">
+                            <div class="book-id">
+                                <input type="hidden" name="BookIds" />
+                                <label>Book Id:</label>
+                                <div class="book-id-value">1</div>
+                            </div>
+                            <div class="book-name">
+                                <label>Book Name:</label>
+                                <div class="book-name-value">Book Name</div>
+                            </div>
+                            <div class="book-author">
+                                <label>Book Author:</label>
+                                <div class="book-author-value">Book Author</div>
+                            </div>
+                            <div class="book-published-date">
+                                <label>Published Date:</label>
+                                <div class="book-published-date-value">Published Date</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div>
+                        <h4>Borrower Detail</h4>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label for="BorrowerName" class="control-label">Borrower Name</label>
+                                    <input type="text" name="BorrowerName" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Address" class="control-label">Address</label>
+                                    <input type="text" name="Address" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="SubmitBorrowedBooks" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form asp-action-for="BatchBorrow" id="borrowBooksForm">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="select-all" />
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Author)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublishedDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr class="book-list-item">
+                    <td>
+                        <input class="form-check-input" type="checkbox" value="@item.Id" disabled="@item.Borrowed" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublishedDate)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", item.Borrowed ? "ReturnBook" : "BorrowBook", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "DeleteBook", new { id = item.Id })
+                    </td>
+                    <td>
+                        @{
+                            if (item.Borrowed)
+                            {
+                                <span class="badge">Unavailable</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Available</span>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" id="borrowBtn" disabled>Borrow</button>
+</form>
+
+<div class="accordion container-fluid">
+    <div class="accordion-header row">
+        <input class="col-md-1" type="checkbox" />
+        <button class="accordion-btn col-md-11">Section 1</button>
+    </div>
+    <div class="panel">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+</div>
+
+<button class="accordion">Section 2</button>
+<div class="panel">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>

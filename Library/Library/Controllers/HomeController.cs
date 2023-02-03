@@ -40,7 +40,8 @@ namespace Library.Controllers
             Book book = new Book
             {
                 BookName = model.BookName,
-                Author = model.Author
+                Author = model.Author,
+                PublishedDate = model.PublishedDate
             };
             _bookServices.InsertBook(book);
 
@@ -60,6 +61,7 @@ namespace Library.Controllers
                     Id = book.Id,
                     BookName = book.BookName,
                     Author = book.Author,
+                    PublishedDate = book.PublishedDate,
                     Borrowed = false
                 };
                 if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
@@ -88,7 +90,7 @@ namespace Library.Controllers
             {
                 Book book = _bookServices.GetBookById(borrowedBook.BookId);
 
-                if(book is null)
+                if (book is null)
                 {
                     continue;
                 }
@@ -132,7 +134,8 @@ namespace Library.Controllers
             {
                 Id = book.Id,
                 BookName = book.BookName,
-                Author = book.Author
+                Author = book.Author,
+                PublishedDate = book.PublishedDate
             };
 
             BorrowedBookModel toBeBorrowed = new BorrowedBookModel
@@ -165,8 +168,7 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
-        [HttpPost]
-        public IActionResult BatchBorrow(List<int> ids)
+        public JsonResult BatchBorrow([FromBody] List<int> ids)
         {
             BorrowedBooksModel borrowedBooks = new BorrowedBooksModel
             {
@@ -179,21 +181,22 @@ namespace Library.Controllers
                 {
                     Id = book.Id,
                     BookName = book.BookName,
-                    Author = book.Author
+                    Author = book.Author,
+                    PublishedDate = book.PublishedDate
                 };
 
                 borrowedBooks.Books.Add(bookModel);
             }
 
-            return View("BorrowBooks", borrowedBooks);
+            return Json(borrowedBooks);
         }
 
         public IActionResult BorrowBooks(BorrowFormModel borrowForm)
         {
             Borrower borrower = new Borrower
             {
-                BorrowerName = borrowForm.Borrower.BorrowerName,
-                Address = borrowForm.Borrower.Address
+                BorrowerName = borrowForm.BorrowerName,
+                Address = borrowForm.Address
             };
             _borrowerServices.NewBorrower(borrower);
 
@@ -223,7 +226,8 @@ namespace Library.Controllers
             {
                 Id = book.Id,
                 BookName = book.BookName,
-                Author = book.Author
+                Author = book.Author,
+                PublishedDate = book.PublishedDate
             };
 
             BorrowerModel borrowerModel = new BorrowerModel

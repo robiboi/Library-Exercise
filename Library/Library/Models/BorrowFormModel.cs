@@ -8,6 +8,7 @@ namespace Library.Models
     public class BorrowFormModel
     {
         public List<int> BookIds { get; set; }
-        public BorrowerModel Borrower { get; set; }
+        public string BorrowerName { get; set; }
+        public string Address { get; set; }
     }
 }
