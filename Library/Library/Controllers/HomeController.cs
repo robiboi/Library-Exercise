@@ -77,7 +77,7 @@ namespace Library.Controllers
             var book = _bookServices.GetBookById(id);
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
 
-            BookModel bookModel = new BookModel
+            BookListItemModel bookModel = new BookListItemModel
             {
                 Id = book.Id,
                 BookName = book.BookName,
@@ -91,6 +91,7 @@ namespace Library.Controllers
                 bookModel.Borrowed = true;
                 var borrowedBook = borrowedBooks.Find(x => x.BookId == book.Id && !x.DateReturned.HasValue);
                 var borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+                bookModel.DateBorrowed = borrowedBook.DateBorrowed.Value;
                 bookModel.Borrower = new BorrowerModel
                 {
                     Id = borrower.Id,
