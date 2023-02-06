@@ -69,12 +69,6 @@
                 console.log(ids);
             }
 
-            $(".accordion-btn").click(function (e) {
-                e.preventDefault();
-                $(this).parent().toggleClass("accordion-active");
-                $(this).parent().next().slideToggle("fast");
-            });
-
             $("#select-all").click(function () {
                 if (this.checked) {
                     $(".form-check-input").each(function () {
@@ -140,6 +134,37 @@
                         $("#BookDetailModal").modal('show');
                     }
                 });
+            });
+
+            $(".accordion-btn").click(function (e) {
+                e.preventDefault();
+                var accordion = $(this).parent();
+                $(accordion).toggleClass("accordion-active");
+                $(accordion).next().slideToggle("fast");
+
+                if (!$(accordion).hasClass("fetched")) {
+                    $(accordion).addClass("fetched");
+                    var panel = $(accordion).next();
+                    $.ajax({
+                        method: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("FetchBookListItem", "Home")",
+                        data: JSON.stringify($(this).val()),
+                        contentType: "application/json",
+                        success: function (data) {
+                            $(panel).find(".check-book-id").val(data.id);
+                            $(panel).find("#panel-book-id").text(data.id);
+                            $(panel).find("#panel-book-name").text(data.bookName);
+                            $(panel).find("#panel-book-author").text(data.author);
+                            $(panel).find("#panel-book-published").text(new Date(data.publishedDate).toDateString());
+                            if (data.borrower != null) {
+                                $(panel).find("#panel-borrower-id").text(data.borrower.id);
+                                $(panel).find("#panel-borrower-name").text(data.borrower.borrowerName);
+                                $(panel).find("#panel-borrower-address").text(data.borrower.address);
+                            }
+                        }
+                    });
+                }
             });
         });
 </script>
@@ -210,8 +235,8 @@
     {
         <div class="accordion container-fluid sm-mb-2">
             <div class="accordion-header row flex-align-center">
-                <input class="form-check-input col-md-1 col-xs-1" type="checkbox" value="@item.Id" disabled="@item.Borrowed" />
-                <button class="accordion-btn col-md-11 col-xs-11">
+                <input class="form-check-input col-md-1 col-xs-1 check-book-id" type="checkbox" value="@item.Id" disabled="@item.Borrowed" />
+                <button class="accordion-btn col-md-11 col-xs-11" value="@item.Id">
                     @item.BookName
                     @{
                         if (item.Borrowed)
@@ -226,55 +251,55 @@
                 </button>
             </div>
             <div class="panel">
-                <div class="row">
-                    <dl class="dl-horizontal col-md-6 col-xs-12">
+                <div class="row panel-content" id="panel-@item.Id">
+                    <dl class="dl-horizontal col-md-6 col-xs-12 panel-content-book">
                         <dt>
-                            @Html.DisplayNameFor(model => item.Id)
+                            Book Id
                         </dt>
-                        <dd>
-                            @Html.DisplayFor(model => item.Id)
+                        <dd id="panel-book-id">
+                            Book Id Value
                         </dd>
                         <dt>
-                            @Html.DisplayNameFor(model => item.BookName)
+                            Book Name
                         </dt>
-                        <dd>
-                            @Html.DisplayFor(model => item.BookName)
+                        <dd id="panel-book-name">
+                            Book Name Value
                         </dd>
                         <dt>
-                            @Html.DisplayNameFor(model => item.Author)
+                            Author
                         </dt>
-                        <dd>
-                            @Html.DisplayFor(model => item.Author)
+                        <dd id="panel-book-author">
+                            Author value
                         </dd>
                         <dt>
-                            @Html.DisplayNameFor(model => item.PublishedDate)
+                            Published Date
                         </dt>
-                        <dd>
-                            @Html.DisplayFor(model => item.PublishedDate)
+                        <dd id="panel-book-published">
+                            Published Date Value
                         </dd>
                     </dl>
 
                     @{
                         if (item.Borrowed)
                         {
-                            <dl class="dl-horizontal col-md-6 col-xs-12">
+                            <dl class="dl-horizontal col-md-6 col-xs-12 panel-content-borrower">
                                 <dt>
-                                    @Html.DisplayNameFor(model => item.Borrower.Id)
+                                    Borrower Id
                                 </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => item.Borrower.Id)
+                                <dd id="panel-borrower-id">
+                                    Borrower Id Value
                                 </dd>
                                 <dt>
-                                    @Html.DisplayNameFor(model => item.Borrower.BorrowerName)
+                                    Borrower Name
                                 </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => item.Borrower.BorrowerName)
+                                <dd id="panel-borrower-name">
+                                    Borrower Name Value
                                 </dd>
                                 <dt>
-                                    @Html.DisplayNameFor(model => item.Borrower.Address)
+                                    Address
                                 </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => item.Borrower.Address)
+                                <dd id="panel-borrower-address">
+                                    Address Value
                                 </dd>
                             </dl>
                         }
