@@ -143,7 +143,7 @@ namespace Library.Controllers
                     Id = borrowedBook.Id,
                     Book = bookModel,
                     Borrower = borrowerModel,
-                    DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
+                    DateBorrowed = borrowedBook.DateBorrowed.Value,
                     DateReturned = borrowedBook.DateReturned
                 };
                 borrowedBookModels.Add(borrowedBookModel);
@@ -204,7 +204,7 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
-        public IActionResult ReturnBook(int id)
+        public JsonResult ReturnBookModal([FromBody] int id)
         {
             var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);
             var book = _bookServices.GetBookById(id);
@@ -233,13 +233,13 @@ namespace Library.Controllers
                 DateBorrowed = borrowedBook.DateBorrowed.Value
             };
 
-            return View(toBeBorrowed);
+            return Json(toBeBorrowed);
         }
 
         [HttpPost]
-        public IActionResult ReturnBook(BorrowedBookModel tobeReturned)
+        public IActionResult ReturnBook(int returnId)
         {
-            var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(tobeReturned.Book.Id);
+            var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(returnId);
             borrowedBook.DateReturned = DateTime.Now;
             _borrowedBookServices.UpdateBorrowedBook(borrowedBook);
 

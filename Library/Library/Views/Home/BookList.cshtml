@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<Library.Models.BookModel>
 
 <style>
+    .btn-link {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-bottom: 2px;
+    }
+
     .book:nth-child(even) {
         background-color: #ccc;
     }
@@ -64,7 +70,7 @@
         $(document).ready(function () {
             var ids = [];
             var bookDetail = $("#BookDetailModal").find(".book-detail").clone();
-            console.log($(bookDetail).html());
+            var returnBookDetail = $("#ReturnBookModal").find(".return-book-details").clone();
             function selectBook(item) {
                     if (item.checked) {
                         ids.push(item.value);
@@ -156,7 +162,6 @@
                 var accordion = $(this).parent();
                 $(accordion).toggleClass("accordion-active");
                 $(accordion).next().slideToggle("fast");
-                console.log($(this).next().val());
 
                 if (!$(accordion).hasClass("fetched")) {
                     $(accordion).addClass("fetched");
@@ -207,6 +212,32 @@
                 });
             });
 
+            $(".returnBookBtn").click(function (e) {
+                e.preventDefault();
+                var data = $(this).val();
+                $.ajax({
+                    method: "POST",
+                    dataType: "json",
+                    url: "@Url.Action("ReturnBookModal", "Home")",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function (data) {
+                        var returnBookHtml = '';
+                        $(returnBookDetail).find("input[name='returnId']").val(data.book.id);
+                        $(returnBookDetail).find(".return-book-id").text(data.book.id);
+                        $(returnBookDetail).find(".return-book-book-name").text(data.book.bookName);
+                        $(returnBookDetail).find(".return-book-author").text(data.book.author);
+                        $(returnBookDetail).find(".return-book-published-date").text(new Date(data.book.publishedDate).toDateString());
+                        $(returnBookDetail).find(".return-book-borrower-date").text(new Date(data.dateBorrowed).toDateString());
+                        $(returnBookDetail).find(".return-book-borrower-name").text(data.borrower.borrowerName);
+                        $(returnBookDetail).find(".return-book-borrower-address").text(data.borrower.address);
+                        returnBookHtml += returnBookDetail.html();
+                        $("#ReturnBookModal").find(".return-book-details").html(returnBookHtml);
+                        $("#ReturnBookModal").modal('show');
+                    }
+                });
+            });
+
         });
 </script>
 
@@ -252,6 +283,75 @@
                 <div class="modal-footer">
                     <button id="SubmitBorrowedBooks" class="btn btn-primary">Submit</button>
                     <button id="CancelBtn" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" hidden id="ReturnBookModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Return Book Form</h4>
+            </div>
+            <form asp-action="ReturnBook">
+                <div class="modal-body">
+                    <div class="return-book-details">
+                        <input type="hidden" name="returnId" />
+
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Book Id
+                            </dt>
+                            <dd class="return-book-id">
+                            </dd>
+                            <dt>
+                                Book Name
+                            </dt>
+                            <dd class="return-book-book-name">
+                                Book Name Value
+                            </dd>
+                            <dt>
+                                Author
+                            </dt>
+                            <dd class="return-book-author">
+                                Author value
+                            </dd>
+                            <dt>
+                                Published Date
+                            </dt>
+                            <dd class="return-book-published-date">
+                                Published Date Value
+                            </dd>
+                        </dl>
+
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Borrowed By
+                            </dt>
+                            <dd class="return-book-borrower-name">
+                                Borrower Name Value
+                            </dd>
+                            <dt>
+                                Address
+                            </dt>
+                            <dd class="return-book-borrower-address">
+                                Address Value
+                            </dd>
+                            <dt>
+                                Borrowed On
+                            </dt>
+                            <dd class="return-book-borrower-date">
+                                Date Borrowed Value
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Return</button>
+                    <button data-dismiss="modal" class="btn btn-secondary">Cancel</button>
                 </div>
             </form>
         </div>
@@ -342,7 +442,7 @@
                 @{
                     if (item.Borrowed)
                     {
-                        @Html.ActionLink("Return", "ReturnBook", new { id = item.Id })
+                        <button class="btn btn-link returnBookBtn" value="@item.Id"> Return </button>
                         <span> | </span>
                     }
                 }
