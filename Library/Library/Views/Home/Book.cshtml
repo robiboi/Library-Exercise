@@ -8,23 +8,36 @@
 @section Scripts
 {
     <script type="text/javascript">
+        function fetchBookList() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("BookList", "Home")",
+                success: function (data) {
+                    $("#BookDetail").html(data);
+                }
+            });
+        }
+
+        function closeModal() {
+            $("#BookModal").modal("hide");
+            $("#BookName").val('');
+            $("#Author").val('');
+        }
+
         $(document).ready(function () {
 
-            $.ajax({
-                 type: "GET",
-                 url: "@Url.Action("BookList", "Home")",
-                 success: function (data) {
-                    $("#BookDetail").html(data);
-                 }
-            });
+            fetchBookList();
 
-            $("#CreateBtn").click(function () {
-                $('#CreateBookModal').modal('show');
-            });
+            $("#OpenModalBtn").click(function () {
+                $("#BookModal").modal({ backdrop: "static" });
+                $("#BookModal").modal("show");
+            })
 
-            
+            $("#CloseModalBtn").click(function () {
+                closeModal();
+            })
 
-            $("#SubmitBtn").click(function (e) {
+            $("#BookForm").submit(function (e) {
                 e.preventDefault();
 
                 $.ajax({
@@ -32,58 +45,60 @@
                     url: "@Url.Action("Book", "Home")",
                     data: $("#BookForm").serialize(),
                     success: function (data) {
-                        $("#CreateBookModal").modal('hide');
-                        $("#BookDetail").html(data);
-                        $("#bookName").val('');
-                        $("#author").val('');
-                        
-
+                        closeModal();
+                        fetchBookList();
                     }
                 });
+
             });
         });
     </script>
 }
 
-<h2>Book</h2>
-<h4>BookModel</h4>
+<h2>Welcome to the Library!</h2>
+
+<h4>Look around and see our collection of books.</h4>
 <hr />
 
-<button class="btn btn-primary" id="CreateBtn">Create Book!</button>
+<button class="btn btn-primary" id="OpenModalBtn">Create Book</button>
+
 <hr />
-<div class="modal" id="CreateBookModal" tabindex="-1" hidden>
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Book Form</h5>
-            </div>
-            <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <form asp-action="Book" id="BookForm">
-                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                <div class="form-group">
-                                    <label asp-for="BookName" class="control-label"></label>
-                                    <input asp-for="BookName" id="bookName" class="form-control" />
-                                    <span asp-validation-for="BookName" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Author" class="control-label"></label>
-                                    <input asp-for="Author" id="author"class="form-control" />
-                                    <span asp-validation-for="Author" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Create" id="SubmitBtn" class="btn btn-default" />
-                                </div>
-                            </form>
+
+<div class="row">
+    <div class="modal" tabindex="-1" role="dialog" id="BookModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create a Book</h4>
+                </div>
+                <form asp-action="Book" id="BookForm">
+                    <div class="modal-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="BookName" class="control-label"></label>
+                            <input asp-for="BookName" id="BookName" class="form-control" />
+                            <span asp-validation-for="BookName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Author" class="control-label"></label>
+                            <input asp-for="Author" id="Author" class="form-control" />
+                            <span asp-validation-for="Author" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PublishedDate" class="control-label"></label>
+                            <input asp-for="PublishedDate" id="PublishedDate" class="form-control" />
+                            <span asp-validation-for="PublishedDate" class="text-danger"></span>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Create" id="SubmitBtn" class="btn btn-primary" />
+                        <button type="button" class="btn btn-secondary" id="CloseModalBtn">Close</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <div class="container" id="BookDetail">
+    </div>
 </div>
-<div class="container" id="BookDetail"></div>
-
-
-
-

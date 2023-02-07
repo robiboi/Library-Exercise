@@ -1,5 +1,4 @@
-﻿using DataLayer.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +9,5 @@ namespace Library.Models
     {
         public List<BookModel> Books { get; set; }
         public BorrowerModel Borrower { get; set; }
-
     }
 }

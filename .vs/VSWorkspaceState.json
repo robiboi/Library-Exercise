@@ -3,8 +3,10 @@
     "",
     "\\Library",
     "\\Library\\DataLayer",
-    "\\Library\\DataLayer\\Domain"
+    "\\Library\\DataLayer\\Domain",
+    "\\Library\\Library",
+    "\\Library\\Library\\Models"
   ],
-  "SelectedNode": "\\Library\\DataLayer\\Domain\\BorrowedBook.cs",
+  "SelectedNode": "\\Library\\Library\\Models\\BorrowedBookModel.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -30,5 +30,10 @@ namespace Services.Services
         {
             return _bookRepository.GetById(id);
         }
+
+        public void DeleteBook(Book book)
+        {
+            _bookRepository.Delete(book);
+        }
     }
 }

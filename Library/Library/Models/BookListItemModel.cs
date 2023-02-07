@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    public class BookModel
+    public class BookListItemModel
     {
         public int Id { get; set; }
         public string BookName { get; set; }
@@ -13,5 +13,6 @@ namespace Library.Models
         public DateTime PublishedDate { get; set; }
         public bool Borrowed { get; set; }
         public BorrowerModel Borrower { get; set; }
+        public DateTime DateBorrowed { get; set; }
     }
 }

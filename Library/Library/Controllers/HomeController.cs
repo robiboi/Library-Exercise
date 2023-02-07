@@ -40,31 +40,13 @@ namespace Library.Controllers
             Book book = new Book
             {
                 BookName = model.BookName,
-                Author = model.Author
+                Author = model.Author,
+                PublishedDate = model.PublishedDate
             };
             _bookServices.InsertBook(book);
-            var books = _bookServices.GetBooks();
-            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
 
-            List<BookModel> bookModels = new List<BookModel>();
-            foreach (var b in books)
-            {
-                BookModel bookModel = new BookModel
-                {
-                    Id = b.Id,
-                    BookName = b.BookName,
-                    Author = b.Author,
-                    Borrowed = false
-                };
-                if (borrowedBooks.Exists(x => x.BookId == b.Id && !x.DateReturned.HasValue))
-                {
-                    bookModel.Borrowed = true;
-                }
-                bookModels.Add(bookModel);
+            return View();
 
-            }
-
-            return PartialView("BookList", bookModels);
         }
 
         public IActionResult BookList()
@@ -73,23 +55,61 @@ namespace Library.Controllers
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
 
             List<BookModel> bookModels = new List<BookModel>();
-            foreach(var book in books)
+            foreach (var book in books)
             {
                 BookModel bookModel = new BookModel
                 {
                     Id = book.Id,
                     BookName = book.BookName,
-                    Author = book.Author,
                     Borrowed = false
                 };
+
                 if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
                 {
                     bookModel.Borrowed = true;
                 }
                 bookModels.Add(bookModel);
-
             }
             return PartialView(bookModels);
+        }
+
+        public JsonResult FetchBookListItem([FromBody] int id)
+        {
+            var book = _bookServices.GetBookById(id);
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks().ToList();
+
+            BookListItemModel bookModel = new BookListItemModel
+            {
+                Id = book.Id,
+                BookName = book.BookName,
+                Author = book.Author,
+                PublishedDate = book.PublishedDate,
+                Borrowed = false
+            };
+
+            if (borrowedBooks.Exists(x => x.BookId == book.Id && !x.DateReturned.HasValue))
+            {
+                bookModel.Borrowed = true;
+                var borrowedBook = borrowedBooks.Find(x => x.BookId == book.Id && !x.DateReturned.HasValue);
+                var borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+                bookModel.DateBorrowed = borrowedBook.DateBorrowed.Value;
+                bookModel.Borrower = new BorrowerModel
+                {
+                    Id = borrower.Id,
+                    BorrowerName = borrower.BorrowerName,
+                    Address = borrower.Address
+                };
+            }
+
+            return Json(bookModel);
+        }
+
+        public IActionResult DeleteBook(int id)
+        {
+            var book = _bookServices.GetBookById(id);
+            _bookServices.DeleteBook(book);
+
+            return RedirectToAction("Book");
         }
 
         public IActionResult BorrowedBookList()
@@ -100,6 +120,12 @@ namespace Library.Controllers
             foreach (var borrowedBook in borrowedBooks)
             {
                 Book book = _bookServices.GetBookById(borrowedBook.BookId);
+
+                if (book is null)
+                {
+                    continue;
+                }
+
                 BookModel bookModel = new BookModel
                 {
                     Id = book.Id,
@@ -131,44 +157,51 @@ namespace Library.Controllers
             return View(book);
         }
 
-        public IActionResult BorrowBook(int id)
+        public JsonResult BatchBorrow([FromBody] List<int> ids)
         {
-            var book = _bookServices.GetBookById(id);
-            
-            BookModel bookModel = new BookModel
+            BorrowedBooksModel borrowedBooks = new BorrowedBooksModel
             {
-                Id = book.Id,
-                BookName = book.BookName,
-                Author = book.Author
+                Books = new List<BookModel>()
             };
+            foreach (var id in ids)
+            {
+                var book = _bookServices.GetBookById(id);
+                BookModel bookModel = new BookModel
+                {
+                    Id = book.Id,
+                    BookName = book.BookName,
+                    Author = book.Author,
+                    PublishedDate = book.PublishedDate
+                };
 
-            BorrowedBookModel toBeBorrowed = new BorrowedBookModel 
-            { 
-                Book = bookModel
-            };
+                borrowedBooks.Books.Add(bookModel);
+            }
 
-            return View(toBeBorrowed);
+            return Json(borrowedBooks);
         }
 
-       [HttpPost]
-       public IActionResult BorrowBook(BorrowedBookModel borrowedBook)
+        public IActionResult BorrowBooks(BorrowFormModel borrowForm)
         {
             Borrower borrower = new Borrower
             {
-                BorrowerName = borrowedBook.Borrower.BorrowerName,
-                Address = borrowedBook.Borrower.Address
+                BorrowerName = borrowForm.BorrowerName,
+                Address = borrowForm.Address
             };
             _borrowerServices.NewBorrower(borrower);
 
-            BorrowedBook borrowed = new BorrowedBook
+            List<BorrowedBook> borrowedBookbatch = new List<BorrowedBook>();
+            foreach (var bookId in borrowForm.BookIds)
             {
-                BookId = borrowedBook.Book.Id,
-                BorrowerId = borrower.Id,
-                DateBorrowed = DateTime.Now
-            };
+                BorrowedBook borrowed = new BorrowedBook
+                {
+                    BookId = bookId,
+                    BorrowerId = borrower.Id,
+                    DateBorrowed = DateTime.Now
+                };
 
-            _borrowedBookServices.InsertBorrowedBook(borrowed);
-
+                borrowedBookbatch.Add(borrowed);
+            }
+            _borrowedBookServices.InsertBorrowedBooks(borrowedBookbatch);
             return RedirectToAction("Book");
         }
 
@@ -231,11 +264,12 @@ namespace Library.Controllers
             {
                 Id = book.Id,
                 BookName = book.BookName,
-                Author = book.Author
+                Author = book.Author,
+                PublishedDate = book.PublishedDate
             };
 
-            BorrowerModel borrowerModel = new BorrowerModel 
-            { 
+            BorrowerModel borrowerModel = new BorrowerModel
+            {
                 Id = borrower.Id,
                 BorrowerName = borrower.BorrowerName,
                 Address = borrower.Address

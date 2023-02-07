@@ -9,5 +9,6 @@ namespace DataLayer.Interface
     {
         void NewBorrower(Borrower borrower);
         Borrower GetBorrowerById(int id);
+        IEnumerable<Borrower> GetBorrowers();
     }
 }
