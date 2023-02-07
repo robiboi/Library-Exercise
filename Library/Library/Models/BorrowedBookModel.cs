@@ -14,5 +14,6 @@ namespace Library.Models
         public BorrowerModel Borrower { get; set; }
         public DateTime DateBorrowed { get; set; }
         public DateTime? DateReturned { get; set; }
+
     }
 }

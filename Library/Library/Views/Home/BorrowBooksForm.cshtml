@@ -1,0 +1,27 @@
+﻿@model Library.Models.BorrowedBooksModel
+
+@{
+    ViewData["Title"] = "BorrowBooksForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    
+}
+<form asp-action="BorrowBooksForm">
+    <hr />
+    @{
+        foreach (var book in Model.Books)
+        {
+            <h2>@book.BookName</h2>
+            <input type="hidden" value="@book.Id" name="Ids" />
+            <partial name="BookDetails" model="book" />
+        }
+    }
+
+    @Html.EditorFor(e => e.Borrower)
+    <div>
+        <button class="btn btn-primary" id="submitBtn">Borrow</button>
+    </div>
+</form>
+
