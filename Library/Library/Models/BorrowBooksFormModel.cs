@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    public class BorrowedBooksModel
+    public class BorrowBooksFormModel
     {
-        public List<BookModel> Books { get; set; }
-        public BorrowerModel Borrower { get; set; }
+        public List<int> Ids { get; set; }
+        public BorrowerModel borrower { get; set; }
     }
 }

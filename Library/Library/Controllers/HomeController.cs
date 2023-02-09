@@ -46,6 +46,7 @@ namespace Library.Controllers
             _bookServices.InsertBook(book);
 
             return View();
+
         }
 
         public IActionResult BookList()
@@ -203,6 +204,7 @@ namespace Library.Controllers
             _borrowedBookServices.InsertBorrowedBooks(borrowedBookbatch);
             return RedirectToAction("Book");
         }
+
 
         public JsonResult ReturnBookModal([FromBody] int id)
         {
