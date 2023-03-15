@@ -182,6 +182,8 @@
                     });
                 }
             });
+            
+           
 
             $(".direct-borrow-btn").click(function (e) {
                 e.preventDefault();
@@ -207,6 +209,29 @@
                     }
                 });
             });
+
+             /*$('#BorrowerName').autocomplete({  
+                 var data = [$(this).val()];
+                    $.ajax({
+                        method: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("BorrowBooks", "Home")",
+                        data: JSON.stringify(data),
+                        contentType: "application/json";
+                        success: function (data){
+                            console.log(data)
+                            response($.map(data. function(item))){
+                                return {label: item.}
+                            }
+                        }
+                    
+                    });
+
+                 
+
+             });*/
+
+            
 
         });
 </script>
@@ -243,7 +268,7 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label for="BorrowerName" class="control-label">Borrower Name</label>
-                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control" />
+                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control nameAutocomplete" autocomplete="off" />
                     </div>
                     <div class="form-group">
                         <label for="Address" class="control-label">Address</label>

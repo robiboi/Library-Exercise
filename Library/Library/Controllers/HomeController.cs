@@ -25,7 +25,7 @@ namespace Library.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("Book");
         }
 
         public IActionResult Book()
@@ -188,7 +188,7 @@ namespace Library.Controllers
                 Address = borrowForm.Address
             };
             _borrowerServices.NewBorrower(borrower);
-
+            
             List<BorrowedBook> borrowedBookbatch = new List<BorrowedBook>();
             foreach (var bookId in borrowForm.BookIds)
             {
@@ -205,55 +205,7 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
-        [HttpPost]
-        public IActionResult BorrowBooks(List<int> ids)
-        {
-            BorrowedBooksModel borrowedBooks = new BorrowedBooksModel
-            {
-                Books = new List<BookModel>()
-            };
-
-            foreach(var id in ids)
-            {
-                var bookId = _bookServices.GetBookById(id);
-                BookModel bookmodel = new BookModel
-                {
-                    Id = bookId.Id,
-                    BookName = bookId.BookName,
-                    Author = bookId.Author,
-                };
-
-                borrowedBooks.Books.Add(bookmodel);
-            }
-            return View("BorrowBooksForm", borrowedBooks);
-        }
-        [HttpPost]
-        public IActionResult BorrowBooksForm(BorrowBooksFormModel borrowForm)
-        {
-            Borrower borrower = new Borrower
-            {
-                BorrowerName = borrowForm.borrower.BorrowerName,
-                Address = borrowForm.borrower.Address
-            };
-            _borrowerServices.NewBorrower(borrower);
-
-            List<BorrowedBook> borrowedBooks = new List<BorrowedBook>();
-            foreach(var id in borrowForm.Ids)
-            {
-                BorrowedBook borrowed = new BorrowedBook
-                {
-                    BookId = id,
-                    BorrowerId = borrower.Id,
-                    DateBorrowed = DateTime.Now
-                };
-
-                borrowedBooks.Add(borrowed);
-            }
-            _borrowedBookServices.InsertBorrowedBooks(borrowedBooks);
-            return RedirectToAction("Book");
-        }
-
-
+       
         public IActionResult ReturnBook(int id)
         {
             var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);
