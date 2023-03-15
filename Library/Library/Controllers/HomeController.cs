@@ -25,7 +25,7 @@ namespace Library.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("Book");
         }
 
         public IActionResult Book()

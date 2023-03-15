@@ -1,0 +1,11 @@
+Library
+ - When borrowing a book, you should have an option to choose from the previous borrower instead of creating a new borrower everytime a book is borrowed
+   - on the borrow book modal, on the borrowers detail, there should be a dropdown that list all the previous borrowers and you can use them as the Borrower.  
+   - WHen selected, it should populate the Borrower Name and Address on the text field and updates the Borrower info in Borrower table if anything is changed.
+   - The dropdown should have a New option at the top, when this is selected, it should clear the text fields and saves the borrowers as new entry in Borrower table.
+
+ - Add a "Borrower" page
+ - This page should list out the Borrowers from the Borrower table of Library
+   - each row should show all the previously borrowed books by the Borrower
+   - the previously borrowed books should be shown as accordion
+ 

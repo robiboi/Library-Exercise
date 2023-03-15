@@ -1,12 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Library",
-    "\\Library\\DataLayer",
-    "\\Library\\DataLayer\\Domain",
-    "\\Library\\Library",
-    "\\Library\\Library\\Models"
+    ""
   ],
-  "SelectedNode": "\\Library\\Library\\Models\\BorrowedBookModel.cs",
+  "SelectedNode": "\\Library.sln",
   "PreviewInSolutionExplorer": false
 }
