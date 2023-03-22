@@ -163,12 +163,12 @@ namespace Library.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public JsonResult BorrowerList(BorrowerModel borrower)
-        //{
-        //    var BorrowerList = _borrowerServices.GetBorrowers();
-        //    return Json(borrower);
-        //}
+        [HttpPost]
+        public JsonResult BorrowerList()
+        {
+            var BorrowerList = _borrowerServices.GetBorrowers();
+            return Json(BorrowerList);
+        }
 
         public JsonResult BatchBorrow([FromBody] List<int> ids)
         {

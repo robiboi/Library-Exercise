@@ -218,14 +218,14 @@
                         method: "POST",
                         dataType: "json",
                         url: "@Url.Action("BorrowerList", "Home")",
-                        data: JSON.stringify(data),
                         contentType: "application/json",
                         success: function (data) 
                         {
-                            var s = '<option value="0"></option>';
+                            debugger;
+                            var s = '<option value="0">New</option>';
                             for (var i = 0; i < data.length; i++)
                             {
-                            s += '<option value="' + data[i].ID + '">' + data[i].BorrowerName + '</option>';
+                            s += '<option value="' + data[i].id + '">' + data[i].borrowerName + '</option>';
                             }
                             $("#Borrowers").html(s);
 
