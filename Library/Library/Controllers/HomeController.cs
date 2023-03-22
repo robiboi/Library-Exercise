@@ -7,6 +7,7 @@ using DataLayer.Domain;
 using DataLayer.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Library.Models;
+using Services.Services;
 
 namespace Library.Controllers
 {
@@ -156,6 +157,18 @@ namespace Library.Controllers
         {
             return View(book);
         }
+
+        public IActionResult Borrowerdetails()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public JsonResult BorrowerList(BorrowerModel borrower)
+        //{
+        //    var BorrowerList = _borrowerServices.GetBorrowers();
+        //    return Json(borrower);
+        //}
 
         public JsonResult BatchBorrow([FromBody] List<int> ids)
         {
