@@ -158,16 +158,53 @@ namespace Library.Controllers
             return View(book);
         }
 
-        public IActionResult Borrowerdetails()
-        {
-            return View();
-        }
+        //public IActionResult Borrowerdetails()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
         public JsonResult BorrowerList()
         {
             var BorrowerList = _borrowerServices.GetBorrowers();
             return Json(BorrowerList);
+        }
+
+        //[HttpPost]
+        //public JsonResult GetBorrowerDetails([FromBody] List<int> borrowerId)
+        //{
+        //    BorrowerModel borrowerModel = new BorrowerModel
+        //    {
+        //        BorrowerName = new List<BorrowFormModel>()
+
+        //    }; 
+        //    foreach (var borrowers in borrowerId)
+        //    {
+        //        var borrowers = _borrowerServices.GetBorrowerById;
+        //        BorrowFormModel borrowFormModel = new BorrowFormModel
+        //        {
+        //            BorrowerName = borrowers
+        //        };
+        //    }
+        //        return Json(borrowFormModel);
+
+        //}
+        [HttpPost]
+        public IActionResult GetBorrowerDetails(int id)
+        { 
+            var borrower = _borrowerServices.GetBorrowerById(id);
+
+            if (borrower != null)
+            {
+                var borrowerDetails = new
+                {
+                    borrowerName = borrower.BorrowerName,
+                    address = borrower.Address
+                };
+                return Json(borrowerDetails);
+            }
+
+            return NotFound();
         }
 
         public JsonResult BatchBorrow([FromBody] List<int> ids)

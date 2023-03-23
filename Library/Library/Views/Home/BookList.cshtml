@@ -228,10 +228,34 @@
                             s += '<option value="' + data[i].id + '">' + data[i].borrowerName + '</option>';
                             }
                             $("#Borrowers").html(s);
-
-                            
+         
                         }
 
+                    });
+
+                    $("#Borrowers").on("change", function () {
+                             var selectedValue = $(this).val();
+                             if (selectedValue !== "0") {
+                                 $.ajax
+                                 ({
+                                     method: "POST",
+                                     dataType: "json",
+                                     url: "@Url.Action("GetBorrowerDetails", "Home")",
+                                     data: { id: selectedValue },
+                                     contentType: "application/json",
+                                     success: function (data) 
+                                     {
+                                         debugger;
+                                         $("#BorrowerName").val(data.borrowerName);
+                                         $("#Address").val(data.address);
+                                     }
+                                     
+                                 });
+                            }
+                               else {
+                                  $("#BorrowerName").val("");
+                                   $("#Address").val("");
+                               }
                     });
              
 
