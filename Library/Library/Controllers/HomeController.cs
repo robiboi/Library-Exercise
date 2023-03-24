@@ -189,8 +189,9 @@ namespace Library.Controllers
         //        return Json(borrowFormModel);
 
         //}
+
         [HttpPost]
-        public IActionResult GetBorrowerDetails(int id)
+        public IActionResult GetBorrowerDetails([FromBody]int id)
         { 
             var borrower = _borrowerServices.GetBorrowerById(id);
 
