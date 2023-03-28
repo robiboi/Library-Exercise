@@ -5,7 +5,157 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .book:nth-child(even) {
+        background-color: #ccc;
+    }
+
+    .book-detail-area {
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .sm-mb-2 {
+        margin-bottom: 2px;
+    }
+
+    .flex-align-center {
+        display: flex;
+        align-items: center;
+    }
+
+    .justify-content {
+        justify-content: space-between;
+    }
+
+    .accordion {
+        background-color: #e5e5e5;
+    }
+
+    .accordion-header {
+        background-color: #eee;
+        color: #444;
+    }
+
+        .accordion-active, .accordion-header:hover {
+            background-color: #ccc;
+        }
+
+    .accordion-btn {
+        background-color: transparent;
+        cursor: pointer;
+        padding: 18px;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+        font-weight: bold;
+    }
+
+    .panel {
+        padding: 10px 18px;
+        display: none;
+        overflow: hidden;
+    }
+</style>
+
+@section scripts{
+   <script>
+        $(".accordion-btn").click(function (e) {
+                e.preventDefault();
+                var accordion = $(this).parent();
+                $(accordion).toggleClass("accordion-active");
+                $(accordion).next().slideToggle("fast");
+                console.log($(this).next().val());
+
+                if (!$(accordion).hasClass("fetched")) {
+                    $(accordion).addClass("fetched");
+                    var panel = $(accordion).next();
+                    var bookId = $(accordion).data("bookid");
+                    $.ajax({
+                        method: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("BorrowedBookLists", "Home")",
+                        data: { id: bookId },
+                        contentType: "application/json",
+                        success: function (data) {
+                            debugger;
+                            $(panel).find("#panel-book-id").text(data.id);
+                            $(panel).find("#panel-book-name").text(data.book);
+                            $(panel).find("#panel-book-borrowername").text(data.borrower);
+                            $(panel).find("#panel-book-dateborrowed").text(new Date(data.dateBorrowed).toDateString());
+                            $(panel).find("#panel-book-datereturned").text(data.dateReturned ? new Date(data.dateReturned).toDateString() : "Not Returned");
+                            
+                        }
+                    });
+                }
+            });
+    </script>
+}
+
 <h2>Borrowed Book History</h2>
+    @foreach (var item in Model) {
+        //<h3>@item.Book.BookName</h3>
+        <div class="accordion container-fluid sm-mb-2">
+            <div class="accordion-btn col-md-10 col-xs-8 row flex-align-center">
+                    @item.Book.BookName
+            </div>
+            <div class="panel">
+                <div class="row panel-content" id="panel-@item.Id">
+                    <dl class="dl-horizontal col-md-6 col-xs-12 panel-content-book">
+                        <dt>
+                            Book Id
+                        </dt>
+                        <dd id="panel-book-id">
+                            Book Id Value
+                        </dd>
+                        <dt>
+                            Book Name
+                        </dt>
+                        <dd id="panel-book-name">
+                            Book Name Value
+                        </dd>
+                        <dt>
+                            Borrower Name
+                        </dt>
+                        <dd id="panel-book-borrowername">
+                            Borrower name value
+                        </dd>
+                        <dt>
+                            Date Borrowed
+                        </dt>
+                        <dd id="panel-book-dateborrowed">
+                            Date Borrowed Value
+                        </dd>
+                        <dt>
+                            Date Returned
+                        </dt>
+                        <dd id="panel-book-datereturned">
+                            Date Returned Value
+                        </dd>
+                    </dl>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <td>
+                @*@{
+                    if (item.DateReturned.HasValue)
+                    {
+                        @Html.DisplayFor(modelItem => item.DateReturned);
+                    }
+                    else
+                    {
+                        <span>Not Returned!</span>
+                    }
+
+                }*@
+            </td>
+    }
+
+
+@*<h2>Borrowed Book History</h2>
 <table class="table">
     <thead>
         <tr>
@@ -58,4 +208,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@

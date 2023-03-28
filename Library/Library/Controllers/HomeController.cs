@@ -112,7 +112,7 @@ namespace Library.Controllers
 
             return RedirectToAction("Book");
         }
-
+        //[HttpPost]
         public IActionResult BorrowedBookList()
         {
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
@@ -153,15 +153,52 @@ namespace Library.Controllers
             return View(borrowedBookModels);
         }
 
+        public JsonResult BorrowedBookLists()
+        {
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
+            List<BorrowedBookModel> borrowedBookModels = new List<BorrowedBookModel>();
+
+            foreach (var borrowedBook in borrowedBooks)
+            {
+                Book book = _bookServices.GetBookById(borrowedBook.BookId);
+
+                if (book is null)
+                {
+                    continue;
+                }
+
+                BookModel bookModel = new BookModel
+                {
+                    Id = book.Id,
+                    BookName = book.BookName,
+                    Author = book.Author
+                };
+                Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+                BorrowerModel borrowerModel = new BorrowerModel
+                {
+                    Id = borrower.Id,
+                    BorrowerName = borrower.BorrowerName,
+                    Address = borrower.Address
+                };
+                BorrowedBookModel borrowedBookModel = new BorrowedBookModel
+                {
+                    Id = borrowedBook.Id,
+                    Book = bookModel,
+                    Borrower = borrowerModel,
+                    DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
+                    DateReturned = borrowedBook.DateReturned
+                };
+                borrowedBookModels.Add(borrowedBookModel);
+            }
+            return Json(borrowedBookModels);
+        }
+
+
         public IActionResult BookDetails(BookModel book)
         {
             return View(book);
         }
 
-        //public IActionResult Borrowerdetails()
-        //{
-        //    return View();
-        //}
 
         [HttpPost]
         public JsonResult BorrowerList()
