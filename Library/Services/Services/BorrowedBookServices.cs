@@ -21,6 +21,11 @@ namespace Services.Services
             return _borrowedBookRepository.Table.Where(x => x.BookId == id && !x.DateReturned.HasValue).FirstOrDefault();
         }
 
+        public BorrowedBook GetBorrowedBookbyID(int id)
+        {
+            return _borrowedBookRepository.GetById(id);
+        }
+
         public IEnumerable<BorrowedBook> GetBorrowedBooks()
         {
             return _borrowedBookRepository.Table.ToList();

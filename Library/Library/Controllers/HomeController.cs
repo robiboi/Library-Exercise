@@ -112,7 +112,6 @@ namespace Library.Controllers
 
             return RedirectToAction("Book");
         }
-        //[HttpPost]
         public IActionResult BorrowedBookList()
         {
             var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
@@ -153,45 +152,94 @@ namespace Library.Controllers
             return View(borrowedBookModels);
         }
 
-        public JsonResult BorrowedBookLists()
+        //public JsonResult BorrowedBookLists()
+        //{
+        //    var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
+        //    List<BorrowedBookModel> borrowedBookModels = new List<BorrowedBookModel>();
+
+        //    foreach (var borrowedBook in borrowedBooks)
+        //    {
+        //        Book book = _bookServices.GetBookById(borrowedBook.BookId);
+
+        //        if (book is null)
+        //        {
+        //            continue;
+        //        }
+
+        //        BookModel bookModel = new BookModel
+        //        {
+        //            Id = book.Id,
+        //            BookName = book.BookName,
+        //            Author = book.Author
+        //        };
+        //        Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
+        //        BorrowerModel borrowerModel = new BorrowerModel
+        //        {
+        //            Id = borrower.Id,
+        //            BorrowerName = borrower.BorrowerName,
+        //            Address = borrower.Address
+        //        };
+        //        BorrowedBookModel borrowedBookModel = new BorrowedBookModel
+        //        {
+        //            Id = borrowedBook.Id,
+        //            Book = bookModel,
+        //            Borrower = borrowerModel,
+        //            DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
+        //            DateReturned = borrowedBook.DateReturned
+        //        };
+        //        borrowedBookModels.Add(borrowedBookModel);
+        //    }
+        //    return Json(borrowedBookModels);
+        //}
+
+        [HttpPost]
+        public JsonResult BorrowedBookLists([FromBody]int id)
         {
-            var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
-            List<BorrowedBookModel> borrowedBookModels = new List<BorrowedBookModel>();
+            //var borrower = _borrowerServices.GetBorrowerById(id);
+            var borrowedBooks = _borrowedBookServices.GetBorrowedBookbyID(id);
+            var book = _bookServices.GetBookById(borrowedBooks.BookId);
+            var borrower = _borrowerServices.GetBorrowerById(borrowedBooks.BorrowerId);
 
-            foreach (var borrowedBook in borrowedBooks)
-            {
-                Book book = _bookServices.GetBookById(borrowedBook.BookId);
+            //var borrowedBookModels = borrowedBooks
 
-                if (book is null)
-                {
-                    continue;
-                }
+                //.Select(borrowedBook =>
+                //{
+                //var book = _bookServices.GetBookById(id);
 
-                BookModel bookModel = new BookModel
-                {
-                    Id = book.Id,
-                    BookName = book.BookName,
-                    Author = book.Author
-                };
-                Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
-                BorrowerModel borrowerModel = new BorrowerModel
-                {
-                    Id = borrower.Id,
-                    BorrowerName = borrower.BorrowerName,
-                    Address = borrower.Address
-                };
-                BorrowedBookModel borrowedBookModel = new BorrowedBookModel
-                {
-                    Id = borrowedBook.Id,
-                    Book = bookModel,
-                    Borrower = borrowerModel,
-                    DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
-                    DateReturned = borrowedBook.DateReturned
-                };
-                borrowedBookModels.Add(borrowedBookModel);
-            }
+            //if (book is null)
+            //{
+            //    return null;
+            //}
+
+
+
+                    var borrowedBookModels = new BorrowedBookModel
+                    {
+                        Id = borrowedBooks.Id,
+                        Book = new BookModel
+                        {
+                            Id = book.Id,
+                            BookName = book.BookName,
+                            Author = book.Author
+                        },
+                        Borrower = new BorrowerModel
+                        {
+                            Id = borrower.Id,
+                            BorrowerName = borrower.BorrowerName,
+                            Address = borrower.Address
+                        },
+                        DateBorrowed = borrowedBooks.DateBorrowed ?? DateTime.Now,
+                        DateReturned = borrowedBooks.DateReturned
+                    };
+                //})
+                //.Where(borrowedBookModel => borrowedBookModel != null)
+                //.ToList();
+
             return Json(borrowedBookModels);
         }
+
+
+
 
 
         public IActionResult BookDetails(BookModel book)
@@ -206,26 +254,6 @@ namespace Library.Controllers
             var BorrowerList = _borrowerServices.GetBorrowers();
             return Json(BorrowerList);
         }
-
-        //[HttpPost]
-        //public JsonResult GetBorrowerDetails([FromBody] List<int> borrowerId)
-        //{
-        //    BorrowerModel borrowerModel = new BorrowerModel
-        //    {
-        //        BorrowerName = new List<BorrowFormModel>()
-
-        //    }; 
-        //    foreach (var borrowers in borrowerId)
-        //    {
-        //        var borrowers = _borrowerServices.GetBorrowerById;
-        //        BorrowFormModel borrowFormModel = new BorrowFormModel
-        //        {
-        //            BorrowerName = borrowers
-        //        };
-        //    }
-        //        return Json(borrowFormModel);
-
-        //}
 
         [HttpPost]
         public IActionResult GetBorrowerDetails([FromBody]int id)

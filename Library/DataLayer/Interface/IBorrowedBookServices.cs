@@ -13,5 +13,7 @@ namespace DataLayer.Interface
         bool IsBorrowed(int id);
         void UpdateBorrowedBook(BorrowedBook borrowed);
         BorrowedBook GetBorrowedBookByBookId(int id);
+
+        BorrowedBook GetBorrowedBookbyID(int id);
     }
 }

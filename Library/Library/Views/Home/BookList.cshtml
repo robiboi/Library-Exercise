@@ -171,6 +171,7 @@
                         data: JSON.stringify($(accordion).find(".check-book-id").val()),
                         contentType: "application/json",
                         success: function (data) {
+                            debugger;
                             $(panel).find("#panel-book-id").text(data.id);
                             $(panel).find("#panel-book-name").text(data.bookName);
                             $(panel).find("#panel-book-author").text(data.author);
