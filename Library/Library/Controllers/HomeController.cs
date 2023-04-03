@@ -321,7 +321,6 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
-       
         public IActionResult ReturnBook(int id)
         {
             var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);
