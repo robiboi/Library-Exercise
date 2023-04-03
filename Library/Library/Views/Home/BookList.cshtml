@@ -60,6 +60,8 @@
     }
 </style>
 
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
 <script type="text/javascript">
         $(document).ready(function () {
             var ids = [];
@@ -169,6 +171,7 @@
                         data: JSON.stringify($(accordion).find(".check-book-id").val()),
                         contentType: "application/json",
                         success: function (data) {
+                            debugger;
                             $(panel).find("#panel-book-id").text(data.id);
                             $(panel).find("#panel-book-name").text(data.bookName);
                             $(panel).find("#panel-book-author").text(data.author);
@@ -182,10 +185,12 @@
                     });
                 }
             });
+            
+           
 
             $(".direct-borrow-btn").click(function (e) {
                 e.preventDefault();
-                var data = [$(this).val()];
+                var data = [$(this).val()]; // [4]
                 $.ajax({
                     method: "POST",
                     dataType: "json",
@@ -208,6 +213,57 @@
                 });
             });
 
+             
+                    $.ajax
+                    ({
+                        method: "POST",
+                        dataType: "json",
+                        url: "@Url.Action("BorrowerList", "Home")",
+                        contentType: "application/json",
+                        success: function (data) 
+                        {
+                            debugger;
+                            var s = '<option value="0">New</option>';
+                            for (var i = 0; i < data.length; i++)
+                            {
+                            s += '<option value="' + data[i].id + '">' + data[i].borrowerName + '</option>';
+                            }
+                            $("#Borrowers").html(s);
+         
+                        }
+
+                    });
+
+                    $("#Borrowers").on("change", function () {
+                             var selectedValue = $(this).val();
+                             if (selectedValue !== "0") {
+                                 $.ajax
+                                 ({
+                                     method: "POST",
+                                     dataType: "json",
+                                     url: "@Url.Action("GetBorrowerDetails", "Home")",
+                                     data: selectedValue,
+                                     contentType: "application/json",
+                                     success: function (data) 
+                                     {
+                                         debugger;
+                                         $("#BorrowerName").val(data.borrowerName);
+                                         $("#Address").val(data.address);
+                                     }
+                                     
+                                 });
+                            }
+                               else {
+                                  $("#BorrowerName").val("");
+                                   $("#Address").val("");
+                               }
+                    });
+             
+
+        
+
+             
+                    
         });
 </script>
 
@@ -242,8 +298,14 @@
                     <h4>Enter Borrower Details</h4>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
+                        <label for="BorrowerName" class="control-label">Borrower</label>
+                        <select id="Borrowers" name="Borrowers">
+                            <option id="0">New</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="BorrowerName" class="control-label">Borrower Name</label>
-                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control" />
+                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control nameAutocomplete" autocomplete="off" />
                     </div>
                     <div class="form-group">
                         <label for="Address" class="control-label">Address</label>
