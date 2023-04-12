@@ -222,7 +222,7 @@
                         contentType: "application/json",
                         success: function (data) 
                         {
-                            debugger;
+                            //debugger;
                             var s = '<option value="0">New</option>';
                             for (var i = 0; i < data.length; i++)
                             {
@@ -246,7 +246,7 @@
                                      contentType: "application/json",
                                      success: function (data) 
                                      {
-                                         debugger;
+                                         //debugger;
                                          $("#BorrowerName").val(data.borrowerName);
                                          $("#Address").val(data.address);
                                      }
@@ -258,6 +258,26 @@
                                    $("#Address").val("");
                                }
                     });
+
+                    
+                     $('#CancelBtn').click(function() {
+                        $.ajax({
+                                method: "POST",
+                                dataType: "json",
+                                url: "@Url.Action("BorrowerList", "Home")",
+                                contentType: "application/json",
+                                success: function (data) 
+                                {
+                                    var s = '<option value="0">New</option>';
+                                    for (var i = 0; i < data.length; i++)
+                                    {
+                                        s += '<option value="' + data[i].id + '">' + data[i].borrowerName + '</option>';
+                                    }
+                                    $("#Borrowers").html(s);
+                                }
+                        });
+                     });
+  
              
 
         
@@ -305,7 +325,7 @@
                     </div>
                     <div class="form-group">
                         <label for="BorrowerName" class="control-label">Borrower Name</label>
-                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control nameAutocomplete" autocomplete="off" />
+                        <input type="text" name="BorrowerName" id="BorrowerName" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="Address" class="control-label">Address</label>

@@ -150,47 +150,7 @@ namespace Library.Controllers
                 borrowedBookModels.Add(borrowedBookModel);
             }
             return View(borrowedBookModels);
-        }
-
-        //public JsonResult BorrowedBookLists()
-        //{
-        //    var borrowedBooks = _borrowedBookServices.GetBorrowedBooks();
-        //    List<BorrowedBookModel> borrowedBookModels = new List<BorrowedBookModel>();
-
-        //    foreach (var borrowedBook in borrowedBooks)
-        //    {
-        //        Book book = _bookServices.GetBookById(borrowedBook.BookId);
-
-        //        if (book is null)
-        //        {
-        //            continue;
-        //        }
-
-        //        BookModel bookModel = new BookModel
-        //        {
-        //            Id = book.Id,
-        //            BookName = book.BookName,
-        //            Author = book.Author
-        //        };
-        //        Borrower borrower = _borrowerServices.GetBorrowerById(borrowedBook.BorrowerId);
-        //        BorrowerModel borrowerModel = new BorrowerModel
-        //        {
-        //            Id = borrower.Id,
-        //            BorrowerName = borrower.BorrowerName,
-        //            Address = borrower.Address
-        //        };
-        //        BorrowedBookModel borrowedBookModel = new BorrowedBookModel
-        //        {
-        //            Id = borrowedBook.Id,
-        //            Book = bookModel,
-        //            Borrower = borrowerModel,
-        //            DateBorrowed = borrowedBook.DateBorrowed.HasValue ? borrowedBook.DateBorrowed.Value : DateTime.Now,
-        //            DateReturned = borrowedBook.DateReturned
-        //        };
-        //        borrowedBookModels.Add(borrowedBookModel);
-        //    }
-        //    return Json(borrowedBookModels);
-        //}
+        }      
 
         [HttpPost]
         public JsonResult BorrowedBookLists([FromBody]int id)
@@ -199,19 +159,6 @@ namespace Library.Controllers
             var borrowedBooks = _borrowedBookServices.GetBorrowedBookbyID(id);
             var book = _bookServices.GetBookById(borrowedBooks.BookId);
             var borrower = _borrowerServices.GetBorrowerById(borrowedBooks.BorrowerId);
-
-            //var borrowedBookModels = borrowedBooks
-
-                //.Select(borrowedBook =>
-                //{
-                //var book = _bookServices.GetBookById(id);
-
-            //if (book is null)
-            //{
-            //    return null;
-            //}
-
-
 
                     var borrowedBookModels = new BorrowedBookModel
                     {
@@ -231,22 +178,9 @@ namespace Library.Controllers
                         DateBorrowed = borrowedBooks.DateBorrowed ?? DateTime.Now,
                         DateReturned = borrowedBooks.DateReturned
                     };
-                //})
-                //.Where(borrowedBookModel => borrowedBookModel != null)
-                //.ToList();
 
             return Json(borrowedBookModels);
         }
-
-
-
-
-
-        public IActionResult BookDetails(BookModel book)
-        {
-            return View(book);
-        }
-
 
         [HttpPost]
         public JsonResult BorrowerList()
