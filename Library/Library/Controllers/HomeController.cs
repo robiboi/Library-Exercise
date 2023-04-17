@@ -255,6 +255,7 @@ namespace Library.Controllers
             return RedirectToAction("Book");
         }
 
+        [HttpGet]
         public IActionResult ReturnBook(int id)
         {
             var borrowedBook = _borrowedBookServices.GetBorrowedBookByBookId(id);
@@ -284,7 +285,7 @@ namespace Library.Controllers
                 DateBorrowed = borrowedBook.DateBorrowed.Value
             };
 
-            return View(toBeBorrowed);
+            return PartialView(toBeBorrowed);
         }
 
         [HttpPost]
