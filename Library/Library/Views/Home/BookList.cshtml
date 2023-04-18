@@ -289,17 +289,33 @@
                      //       });
                      //});
 
-                     $(".return-link").click(function (e) {
+                     //$(".return-link").click(function (e) {
+                     //   e.preventDefault();
+                     //   var href = $(this).attr("href");
+                     //       $.ajax({
+                     //           method: "GET",
+                     //           dataType: "html",
+                     //           url: href,
+                     //               success: function (data) {
+                     //                   debugger;
+                     //               var popup = $("<div>").html(data).find("#myModal");
+                     //               $(popup).modal("show");
+                     //               }
+                     //       });
+                     //});
+
+                     $(".return-button").click(function (e) {
                         e.preventDefault();
-                        var href = $(this).attr("href");
+                        var id = $(this).data("id");
+                        //var href = "/Home/ReturnBook?id=" + id;
                             $.ajax({
                                 method: "GET",
                                 dataType: "html",
-                                url: href,
+                                url: "@Url.Action("ReturnBook", "Home")?id=" + id,
                                     success: function (data) {
                                         debugger;
-                                    var popup = $("<div>").html(data).find("#myModal");
-                                    $(popup).modal("show");
+                                        var popup = $("<div>").html(data).find("#returnBook");
+                                        $(popup).modal("show");
                                     }
                             });
                      });
@@ -315,7 +331,7 @@
         });
 </script>
 
-<div class="modal" tabindex="-1" role="dialog" id="myModal">
+@*<div class="modal" tabindex="-1" role="dialog" id="myModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -341,7 +357,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 <div class="modal" tabindex="-1" hidden id="BookDetailModal">
     <div class="modal-dialog">
@@ -481,7 +497,9 @@
                 @{
                     if (item.Borrowed)
                     {
-                        ("Return", "ReturnBook", new { id = item.Id }, new { @class = "return-link", @id = $"return-{item.Id}" })
+
+                        <button class="return-button" data-id="@item.Id">Return</button>
+                        //@Html.ActionLink("Return", "ReturnBook", new { id = item.Id }, new { @class = "return-link", @id = $"return-{item.Id}" })
 
                         //@Html.ActionLink("Return", "ReturnBook", new { id = item.Id })
                         <span> | </span>
