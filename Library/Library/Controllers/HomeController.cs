@@ -285,7 +285,7 @@ namespace Library.Controllers
                 DateBorrowed = borrowedBook.DateBorrowed.Value
             };
 
-            return View(toBeBorrowed);
+            return PartialView(toBeBorrowed);
         }
 
         [HttpPost]
